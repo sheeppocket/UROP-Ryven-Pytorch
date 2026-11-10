@@ -7,10 +7,10 @@ from ryven.main.Ryven import run
 def open_workspace(qt_app=None, *, project=None):
     """Open an editable project or a blank graph with the PyTorch nodes available."""
     nodes = Path(__file__).resolve().with_name('nodes')
-    args = (str(project),) if project is not None else ()
+    project_args = (str(project),) if project is not None else ()
     return run(
-        *args, qt_app=qt_app, use_sysargs=False, show_dialog=False, qt_api='pyside2',
-        nodes=[] if args else [nodes],
+        *project_args, qt_app=qt_app, use_sysargs=False, show_dialog=False, qt_api='pyside2',
+        nodes=[] if project_args else [nodes],
     )
 
 

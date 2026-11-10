@@ -7,6 +7,11 @@ case "$OSTYPE" in
         if [[ -x .venv/Scripts/python.exe ]]; then
             exec .venv/Scripts/python.exe launchers/install.py
         fi
+        local_python="${LOCALAPPDATA:-}/Programs/Python/Python310/python.exe"
+        local_python="${local_python//\\//}"
+        if [[ -x "$local_python" ]]; then
+            exec "$local_python" launchers/install.py
+        fi
         if py -3.10 --version >/dev/null 2>&1; then
             exec py -3.10 launchers/install.py
         fi

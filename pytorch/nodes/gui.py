@@ -575,10 +575,6 @@ class FeatureMapPanel(QGroupBox):
         for caption, preview in self.tiles:
             caption.clear()
             preview.clear()
-        if layer is None:
-            self.layer_name.setText('The encoder starts with the selected layer.')
-            self.summary.clear()
-            return
 
         name, (count, height, width), channels = layer
         self.layer_name.setText(name)
@@ -599,15 +595,24 @@ class FeatureMapsDialog(QDialog):
         self.layers = layers
 
         layout = QVBoxLayout(self)
-        navigation = QHBoxLayout()
+        self.reference_picker = QComboBox(self)
+        self.reference_picker.setAccessibleName('Reference layer')
+        self.picker = QComboBox(self)
+        self.picker.setAccessibleName('Comparison layer')
         self.previous_button = QPushButton('Previous', self)
         self.next_button = QPushButton('Next', self)
-        self.picker = QComboBox(self)
         self.progress = QLabel(self)
-        for index, (name, _, _) in enumerate(layers, 1):
-            self.picker.addItem(f'{index}. {name}')
-        navigation.addWidget(self.previous_button)
+        choices = [f'{index}. {name}' for index, (name, _, _) in enumerate(layers, 1)]
+        self.reference_picker.addItems(choices)
+        self.picker.addItems(choices)
+        self.picker.setCurrentIndex(len(layers) - 1)
+
+        navigation = QHBoxLayout()
+        navigation.addWidget(QLabel('Reference layer', self))
+        navigation.addWidget(self.reference_picker, stretch=1)
+        navigation.addWidget(QLabel('Comparison layer', self))
         navigation.addWidget(self.picker, stretch=1)
+        navigation.addWidget(self.previous_button)
         navigation.addWidget(self.next_button)
         navigation.addWidget(self.progress)
         layout.addLayout(navigation)
@@ -623,9 +628,9 @@ class FeatureMapsDialog(QDialog):
         content.setAlignment(original, Qt.AlignVCenter)
 
         channel_count = max(len(channels) for _, _, channels in layers)
-        self.previous_layer = FeatureMapPanel('Previous convolution', channel_count, self)
-        self.selected_layer = FeatureMapPanel('Selected convolution', channel_count, self)
-        content.addWidget(self.previous_layer)
+        self.reference_layer = FeatureMapPanel('Reference convolution', channel_count, self)
+        self.selected_layer = FeatureMapPanel('Comparison convolution', channel_count, self)
+        content.addWidget(self.reference_layer)
         content.addWidget(self.selected_layer)
 
         legend = QLabel('Layers are shown in the order they ran. These are raw convolution outputs. '
@@ -634,14 +639,18 @@ class FeatureMapsDialog(QDialog):
         layout.addWidget(legend)
         self.previous_button.clicked.connect(lambda: self.picker.setCurrentIndex(self.picker.currentIndex() - 1))
         self.next_button.clicked.connect(lambda: self.picker.setCurrentIndex(self.picker.currentIndex() + 1))
+        self.reference_picker.currentIndexChanged.connect(self.show_reference_layer)
         self.picker.currentIndexChanged.connect(self.show_layer)
-        self.show_layer(0)
+        self.show_reference_layer(self.reference_picker.currentIndex())
+        self.show_layer(self.picker.currentIndex())
+
+    def show_reference_layer(self, index):
+        self.reference_layer.show_maps(self.layers[index])
 
     def show_layer(self, index):
         self.progress.setText(f'Layer {index + 1} of {len(self.layers)}')
         self.previous_button.setEnabled(index > 0)
         self.next_button.setEnabled(index < len(self.layers) - 1)
-        self.previous_layer.show_maps(self.layers[index - 1] if index else None)
         self.selected_layer.show_maps(self.layers[index])
 
 

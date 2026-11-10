@@ -54,7 +54,7 @@ model = nn.Sequential(nn.Linear(2, 8), nn.ReLU(), nn.Linear(8, 2))
 
 ### 3A. CNN backbone + classifier
 
-Follow the [five-class digits demo](#five-class-demo). Watch **Add Trainable Classifier** map 512 ResNet features to five scores. Inspect two consecutive convolution outputs for the same image and compare their spatial dimensions. The backbone stays fixed throughout training.
+Follow the [five-class digits demo](#five-class-demo). Watch **Add Trainable Classifier** map 512 ResNet features to five scores. Compare the spatial dimensions of two convolution outputs for the same image. The backbone stays fixed throughout training.
 
 ### 3B. RNN backbone + classifier
 
@@ -100,7 +100,7 @@ Open the **CNN backbone + classifier** preset with `04-cnn-digits`.
 1. Click **Load Model** in **Load Pretrained Backbone**.
 2. Leave **Bundled digits (0–4)** selected and click **Find Images**. The folders `0` through `4` supply the class names, with 25 training and 10 test images each. Follow the two paths through tensor conversion and dataset construction. The converters show `(125, 3, 224, 224)` for training and `(50, 3, 224, 224)` for testing with the default ResNet-18.
 3. Click **Train** in **Train Classifier**. After six epochs, **Check Accuracy on Test Images** reports how many of the test images were classified correctly. Classifier initialization and training batch order can vary between runs.
-4. Click **Test Image** in **Predict and Inspect a Test Image** to check the example against its folder label. Click **View Feature Maps** and use **Next** to compare consecutive convolutions for that image. To inspect a different image, click **Inspect Image File…**.
+4. Click **Test Image** in **Predict and Inspect a Test Image** to check the example against its folder label. Click **View Feature Maps** to compare the first and last convolutions. Choose an intermediate layer from either dropdown to compare it with the layer shown in the other panel. To inspect a different image, click **Inspect Image File…**.
 
 The demo data loads locally. The optimizer receives only the new classifier's weights and bias.
 
@@ -113,7 +113,7 @@ Open the **Weed photos** preset with `06-weed-photos`.
 1. Click **Load Model** in **Load Pretrained Backbone**.
 2. Click **Find Images**. The two folder paths are already filled in. The node finds 125 training photos and 50 test photos across five classes. Follow each split through tensor conversion, pairing with labels, and batching.
 3. Click **Train** in **Train Classifier**. Training fits the classifier head with the pretrained ResNet-18 backbone frozen. **Check Accuracy on Test Images** reports how many of the 50 test photos the classifier gets right.
-4. Click **Test Image** in **Predict and Inspect a Test Image** to see a held-out photo and compare its predicted species with its folder label. Click **View Feature Maps** to browse the convolution outputs for that photo.
+4. Click **Test Image** in **Predict and Inspect a Test Image** to see a held-out photo and compare its predicted species with its folder label. Click **View Feature Maps** and use the layer dropdowns to compare any two convolution outputs for that photo.
 
 The bundled photos are a [DeepWeeds teaching subset](demo_data/deepweeds/README.md) covering Chinee apple, Lantana, Parkinsonia, Parthenium, and Prickly acacia.
 
@@ -141,7 +141,7 @@ The Ryven training and test nodes display successful progress and metrics in the
 - **Train Model:** connect a model and labelled data loader, select loss/optimizer/rate/epochs, and click **Train**. Input edits never start training. Training runs in a Qt worker; the trained model and sample-weighted epoch mean losses are published on the main thread. Changing inputs during training invalidates its result. Removing the node or closing the app requests cancellation between batches.
 - **Check Test Performance** takes a trained model and test batches. The third input defaults to cross entropy and also accepts a supported loss name or callable. Outputs are sample-weighted mean loss and a list of prediction batches. The node displays accuracy for cross entropy with integer class labels. Evaluation restores the model's prior train/eval mode.
 - **Predict and View Feature Maps** takes a loaded or trained classifier and one image. Click **Test Image** to see the thumbnail and up to five predictions. Supply an optional `expected_class` as a class name or zero-based index to see whether the top prediction matches. Use **Check Test Performance** for accuracy and loss across a held-out dataset.
-- **View Feature Maps** runs the connected image once and shows it beside the selected convolution and the previous one. **Previous** and **Next** follow execution order, and the dropdown jumps to any layer. Each panel shows the spatial size and up to eight raw output channels before later operations such as ReLU. Channels are scaled separately around gray (zero).
+- **View Feature Maps** runs the connected image once and shows it beside the first and last convolution outputs. Both the **Reference layer** and **Comparison layer** dropdowns list all captured convolutions in execution order. **Previous** and **Next** step through the comparison layers while keeping the reference fixed. Each panel shows the spatial size and up to eight raw output channels before later operations such as ReLU. Channels are scaled separately around gray (zero).
 - **Inspect Image File…** opens the same viewer for a file you choose. It can check a manually entered class. A label supplied by a wire stays with the image on `image_path`, which is the image used by **Test Image** and **View Feature Maps**.
 - Text fields accept Python literals (tuples, lists, numbers, strings), with raw text as a fallback. They do not evaluate arbitrary Python expressions.
 

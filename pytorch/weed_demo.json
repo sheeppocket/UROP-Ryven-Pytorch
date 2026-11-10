@@ -54,7 +54,7 @@
               "label": "model"
             }
           ],
-          "pos x": 245.0,
+          "pos x": 280.0,
           "pos y": 135.0,
           "main widget data": "gAR9lC4=",
           "unconnected ports hidden": false,
@@ -103,7 +103,7 @@
               "label": "model"
             }
           ],
-          "pos x": 1050.0,
+          "pos x": 1240.0,
           "pos y": 135.0,
           "main widget data": "gAR9lC4=",
           "unconnected ports hidden": false,
@@ -171,8 +171,8 @@
               "label": "dataloader"
             }
           ],
-          "pos x": 1350.0,
-          "pos y": 401.0,
+          "pos x": 1700.0,
+          "pos y": 470.0,
           "unconnected ports hidden": false,
           "collapsed": false,
           "actions": {
@@ -238,8 +238,8 @@
               "label": "dataloader"
             }
           ],
-          "pos x": 1350.0,
-          "pos y": 756.0,
+          "pos x": 1700.0,
+          "pos y": 640.0,
           "unconnected ports hidden": false,
           "collapsed": false,
           "actions": {
@@ -344,8 +344,8 @@
               "label": "loss_history"
             }
           ],
-          "pos x": 1720.0,
-          "pos y": 299.0,
+          "pos x": 2290.0,
+          "pos y": 335.0,
           "main widget data": "gASVEAAAAAAAAAB9lIwGc3RhdHVzlIwAlHMu",
           "unconnected ports hidden": false,
           "collapsed": false,
@@ -406,8 +406,8 @@
               "label": "predictions"
             }
           ],
-          "pos x": 2150.0,
-          "pos y": 480.0,
+          "pos x": 2890.0,
+          "pos y": 560.0,
           "main widget data": "gAR9lC4=",
           "unconnected ports hidden": false,
           "collapsed": false,
@@ -458,8 +458,8 @@
             }
           ],
           "outputs": [],
-          "pos x": 2150.0,
-          "pos y": 790.0,
+          "pos x": 2890.0,
+          "pos y": 865.0,
           "main widget data": "gASVEAAAAAAAAAB9lIwGcmVwb3J0lIwAlHMu",
           "unconnected ports hidden": false,
           "collapsed": false,
@@ -550,8 +550,8 @@
               "label": "held_out_label"
             }
           ],
-          "pos x": 260.0,
-          "pos y": 525.0,
+          "pos x": 250.0,
+          "pos y": 535.0,
           "main widget data": "gAR9lC4=",
           "unconnected ports hidden": false,
           "collapsed": false,
@@ -564,9 +564,6 @@
             },
             "change title": {
               "method": "change_title"
-            },
-            "console ref": {
-              "method": "console_ref_monkeypatch"
             }
           },
           "display title": "Find Labeled Images",
@@ -646,8 +643,8 @@
           },
           "display title": "Convert Training Images to Tensor",
           "inspector widget": {},
-          "pos x": 635.0,
-          "pos y": 285.0
+          "pos x": 750.0,
+          "pos y": 305.0
         },
         {
           "GID": 143,
@@ -701,8 +698,8 @@
           },
           "display title": "Build Training Dataset from Tensors",
           "inspector widget": {},
-          "pos x": 1050.0,
-          "pos y": 401.0
+          "pos x": 1240.0,
+          "pos y": 470.0
         },
         {
           "GID": 151,
@@ -778,8 +775,8 @@
           },
           "display title": "Convert Test Images to Tensor",
           "inspector widget": {},
-          "pos x": 635.0,
-          "pos y": 640.0
+          "pos x": 750.0,
+          "pos y": 775.0
         },
         {
           "GID": 156,
@@ -833,8 +830,8 @@
           },
           "display title": "Build Test Dataset from Tensors",
           "inspector widget": {},
-          "pos x": 1050.0,
-          "pos y": 756.0
+          "pos x": 1240.0,
+          "pos y": 640.0
         }
       ],
       "connections": [
@@ -1104,11 +1101,11 @@
     "18": {
       "state": "000000ff00000000fd0000000100000001000002fd000001acfc0200000001fc00000000000001ac0000000000fffffffaffffffff0200000006fb0000001c0069006e00730070006500630074006f0072005f0064006f0063006b0000000000ffffffff0000003400fffffffb000000220075006e0064006f005f0068006900730074006f00720079005f0064006f0063006b0000000000ffffffff0000005c00fffffffb0000001a00730065007400740069006e00670073005f0064006f0063006b0000000000ffffffff0000004200000042fb0000001c007600610072006900610062006c00650073005f0064006f0063006b0000000000ffffffff0000008500fffffffb00000016006c006f0067006700650072005f0064006f0063006b0000000000ffffffff0000004e00fffffffb000000160073006f0075007200630065005f0064006f0063006b0000000000ffffffff0000007200ffffff00000486000002c700000004000000040000000800000008fc00000000",
       "view": {
-        "m11": 0.46,
+        "m11": 0.4,
         "m12": 0.0,
         "m13": 0.0,
         "m21": 0.0,
-        "m22": 0.46,
+        "m22": 0.4,
         "m23": 0.0,
         "m31": 0.0,
         "m32": 0.0,

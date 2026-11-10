@@ -133,22 +133,36 @@ def check_feature_dialog():
     dialog = app.activeModalWidget()
     try:
         assert isinstance(dialog, gui.FeatureMapsDialog)
+        reference_picker = dialog.reference_picker
         picker = dialog.picker
         assert picker.itemText(0) == '1. conv1'
-        assert picker.count() == 20
-        assert '112 × 112' in dialog.selected_layer.summary.text()
-        assert not dialog.selected_layer.tiles[0][1].pixmap().isNull()
-        assert not dialog.previous_button.isEnabled()
-        calls_before_navigation = len(forward_calls)
-        dialog.next_button.click()
-        assert dialog.progress.text() == 'Layer 2 of 20'
-        assert dialog.previous_layer.layer_name.text() == 'conv1'
-        assert '56 × 56' in dialog.selected_layer.summary.text()
-        dialog.previous_button.click()
-        assert picker.currentIndex() == 0
-        picker.setCurrentIndex(picker.count() - 1)
+        assert reference_picker.count() == picker.count() == 20
+        assert all(reference_picker.itemText(index) == picker.itemText(index) for index in range(picker.count()))
+        assert reference_picker.currentIndex() == 0
+        assert picker.currentIndex() == picker.count() - 1
+        assert '112 × 112' in dialog.reference_layer.summary.text()
         assert '7 × 7' in dialog.selected_layer.summary.text()
+        assert not dialog.reference_layer.tiles[0][1].pixmap().isNull()
+        assert not dialog.selected_layer.tiles[0][1].pixmap().isNull()
         assert not dialog.next_button.isEnabled()
+        calls_before_navigation = len(forward_calls)
+        middle = picker.count() // 2
+        picker.setCurrentIndex(middle)
+        assert dialog.selected_layer.layer_name.text() == dialog.layers[middle][0]
+        assert dialog.reference_layer.layer_name.text() == 'conv1'
+        reference_picker.setCurrentIndex(reference_picker.count() - 1)
+        assert '7 × 7' in dialog.reference_layer.summary.text()
+        assert picker.currentIndex() == middle
+        assert dialog.progress.text() == f'Layer {middle + 1} of 20'
+        dialog.previous_button.click()
+        assert picker.currentIndex() == middle - 1
+        dialog.next_button.click()
+        assert picker.currentIndex() == middle
+        assert reference_picker.currentIndex() == reference_picker.count() - 1
+        picker.setCurrentIndex(0)
+        assert picker.currentIndex() == 0
+        assert '112 × 112' in dialog.selected_layer.summary.text()
+        assert not dialog.previous_button.isEnabled()
         assert len(forward_calls) == calls_before_navigation
         preview_checked.append(True)
     finally:
@@ -176,7 +190,7 @@ with tempfile.TemporaryDirectory() as tmp:
     evaluation.gui.input_widget(1).setText('')
     assert evaluation_widget.image_preview.isHidden()
 hook.remove()
-print('Image selection, in-node preview, and consecutive convolution maps passed', flush=True)
+print('Image selection, in-node preview, and convolution layer comparison passed', flush=True)
 train = nodes['TrainModelNode']
 flow.disconnect_nodes(classifier.outputs[0], train.inputs[0])
 flow.disconnect_nodes(loader.outputs[0], train.inputs[1])
