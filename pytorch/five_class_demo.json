@@ -1,0 +1,1074 @@
+{
+  "general info": {
+    "type": "Ryven project file",
+    "ryven version": "3.5.0"
+  },
+  "required packages": [
+    {
+      "name": "nodes",
+      "dir": "pytorch/nodes"
+    }
+  ],
+  "GID": 2,
+  "version": "0.5.0",
+  "flows": {
+    "Five-class digits": {
+      "GID": 18,
+      "algorithm mode": "data",
+      "nodes": [
+        {
+          "GID": 19,
+          "identifier": "nodes.Model Setup.ModelsNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 23,
+              "type": "data",
+              "label": "model_type",
+              "default": {
+                "GID": 24,
+                "identifier": "Data",
+                "serialized": "gASVDAAAAAAAAACMCHJlc25ldDE4lC4="
+              },
+              "has widget": true,
+              "widget name": "model_type",
+              "widget pos": "besides",
+              "widget data": "gASVFQAAAAAAAAB9lIwDdmFslIwIcmVzbmV0MTiUcy4="
+            },
+            {
+              "GID": 25,
+              "type": "data",
+              "label": "weights",
+              "has widget": true,
+              "widget name": "weights",
+              "widget pos": "besides",
+              "widget data": "gASVDQAAAAAAAAB9lIwDdmFslIwAlHMu"
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 26,
+              "type": "data",
+              "label": "model"
+            }
+          ],
+          "pos x": 245.0,
+          "pos y": 135.0,
+          "main widget data": "gAR9lC4=",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Load Pretrained Backbone",
+          "inspector widget": {}
+        },
+        {
+          "GID": 27,
+          "identifier": "nodes.Data.ImageFolderPathsNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 38,
+              "type": "data",
+              "label": "image_folder",
+              "default": {
+                "GID": 37,
+                "identifier": "Data",
+                "serialized": "gASVGgAAAAAAAACMFkJ1bmRsZWQgZGlnaXRzICgw4oCTNCmULg=="
+              },
+              "has widget": true,
+              "widget name": "image_folder",
+              "widget pos": "besides",
+              "widget data": "gASVIwAAAAAAAAB9lIwDdmFslIwWQnVuZGxlZCBkaWdpdHMgKDDigJM0KZRzLg=="
+            },
+            {
+              "GID": 116,
+              "type": "data",
+              "label": "test_folder",
+              "default": {
+                "GID": 117,
+                "identifier": "Data",
+                "serialized": "gASVBAAAAAAAAACMAJQu"
+              },
+              "has widget": true,
+              "widget name": "test_folder",
+              "widget pos": "besides",
+              "widget data": "gASVDQAAAAAAAAB9lIwDdmFslIwAlHMu"
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 118,
+              "type": "data",
+              "label": "class_names"
+            },
+            {
+              "GID": 119,
+              "type": "data",
+              "label": "train_image_paths"
+            },
+            {
+              "GID": 120,
+              "type": "data",
+              "label": "train_labels"
+            },
+            {
+              "GID": 121,
+              "type": "data",
+              "label": "test_image_paths"
+            },
+            {
+              "GID": 122,
+              "type": "data",
+              "label": "test_labels"
+            },
+            {
+              "GID": 123,
+              "type": "data",
+              "label": "held_out_image"
+            },
+            {
+              "GID": 124,
+              "type": "data",
+              "label": "held_out_label"
+            }
+          ],
+          "pos x": 260.0,
+          "pos y": 525.0,
+          "main widget data": "gAR9lC4=",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Find Labeled Images",
+          "inspector widget": {}
+        },
+        {
+          "GID": 39,
+          "identifier": "nodes.Model Setup.FrozenResNetClassifierNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 43,
+              "type": "data",
+              "label": "backbone",
+              "has widget": false
+            },
+            {
+              "GID": 44,
+              "type": "data",
+              "label": "class_names",
+              "has widget": true,
+              "widget name": "class_names",
+              "widget pos": "besides",
+              "widget data": "gASVDQAAAAAAAAB9lIwDdmFslIwAlHMu"
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 45,
+              "type": "data",
+              "label": "model"
+            }
+          ],
+          "pos x": 1050.0,
+          "pos y": 135.0,
+          "main widget data": "gAR9lC4=",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Add Trainable Classifier",
+          "inspector widget": {}
+        },
+        {
+          "GID": 46,
+          "identifier": "nodes.Data.DataLoaderNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 51,
+              "type": "data",
+              "label": "dataset",
+              "has widget": false
+            },
+            {
+              "GID": 52,
+              "type": "data",
+              "label": "batch_size",
+              "default": {
+                "GID": 53,
+                "identifier": "Data",
+                "serialized": "gARLEC4="
+              },
+              "has widget": true,
+              "widget name": "batch_size",
+              "widget pos": "besides",
+              "widget data": "gASVDwAAAAAAAAB9lIwDdmFslIwCMTaUcy4="
+            },
+            {
+              "GID": 54,
+              "type": "data",
+              "label": "shuffle",
+              "default": {
+                "GID": 55,
+                "identifier": "Data",
+                "serialized": "gASVCAAAAAAAAACMBFRydWWULg=="
+              },
+              "has widget": true,
+              "widget name": "shuffle",
+              "widget pos": "besides",
+              "widget data": "gASVEQAAAAAAAAB9lIwDdmFslIwEVHJ1ZZRzLg=="
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 56,
+              "type": "data",
+              "label": "dataloader"
+            }
+          ],
+          "pos x": 1350.0,
+          "pos y": 401.0,
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Group Training Images",
+          "inspector widget": {}
+        },
+        {
+          "GID": 57,
+          "identifier": "nodes.Data.DataLoaderNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 62,
+              "type": "data",
+              "label": "dataset",
+              "has widget": false
+            },
+            {
+              "GID": 63,
+              "type": "data",
+              "label": "batch_size",
+              "default": {
+                "GID": 64,
+                "identifier": "Data",
+                "serialized": "gARLEC4="
+              },
+              "has widget": true,
+              "widget name": "batch_size",
+              "widget pos": "besides",
+              "widget data": "gASVDwAAAAAAAAB9lIwDdmFslIwCMTaUcy4="
+            },
+            {
+              "GID": 65,
+              "type": "data",
+              "label": "shuffle",
+              "default": {
+                "GID": 66,
+                "identifier": "Data",
+                "serialized": "gASVCQAAAAAAAACMBUZhbHNllC4="
+              },
+              "has widget": true,
+              "widget name": "shuffle",
+              "widget pos": "besides",
+              "widget data": "gASVEgAAAAAAAAB9lIwDdmFslIwFRmFsc2WUcy4="
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 67,
+              "type": "data",
+              "label": "dataloader"
+            }
+          ],
+          "pos x": 1350.0,
+          "pos y": 756.0,
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Group Test Images",
+          "inspector widget": {}
+        },
+        {
+          "GID": 68,
+          "identifier": "nodes.Training.TrainModelNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 77,
+              "type": "data",
+              "label": "model",
+              "has widget": false
+            },
+            {
+              "GID": 78,
+              "type": "data",
+              "label": "train_data_loader",
+              "has widget": false
+            },
+            {
+              "GID": 79,
+              "type": "data",
+              "label": "loss",
+              "default": {
+                "GID": 80,
+                "identifier": "Data",
+                "serialized": "gASVEQAAAAAAAACMDWNyb3NzX2VudHJvcHmULg=="
+              },
+              "has widget": true,
+              "widget name": "loss",
+              "widget pos": "besides",
+              "widget data": "gASVGgAAAAAAAAB9lIwDdmFslIwNY3Jvc3NfZW50cm9weZRzLg=="
+            },
+            {
+              "GID": 81,
+              "type": "data",
+              "label": "optimizer",
+              "default": {
+                "GID": 82,
+                "identifier": "Data",
+                "serialized": "gASVCAAAAAAAAACMBEFkYW2ULg=="
+              },
+              "has widget": true,
+              "widget name": "optimizer",
+              "widget pos": "besides",
+              "widget data": "gASVEQAAAAAAAAB9lIwDdmFslIwEQWRhbZRzLg=="
+            },
+            {
+              "GID": 83,
+              "type": "data",
+              "label": "learning_rate",
+              "default": {
+                "GID": 84,
+                "identifier": "Data",
+                "serialized": "gASVCgAAAAAAAABHP2iTdLxqfvou"
+              },
+              "has widget": true,
+              "widget name": "learning_rate",
+              "widget pos": "besides",
+              "widget data": "gASVEwAAAAAAAAB9lIwDdmFslEc/aJN0vGp++nMu"
+            },
+            {
+              "GID": 85,
+              "type": "data",
+              "label": "epochs",
+              "default": {
+                "GID": 86,
+                "identifier": "Data",
+                "serialized": "gASVCgAAAAAAAABHQBgAAAAAAAAu"
+              },
+              "has widget": true,
+              "widget name": "epochs",
+              "widget pos": "besides",
+              "widget data": "gASVEwAAAAAAAAB9lIwDdmFslEdAGAAAAAAAAHMu"
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 87,
+              "type": "data",
+              "label": "trained_model"
+            },
+            {
+              "GID": 88,
+              "type": "data",
+              "label": "loss_history"
+            }
+          ],
+          "pos x": 1720.0,
+          "pos y": 299.0,
+          "main widget data": "gASVEAAAAAAAAAB9lIwGc3RhdHVzlIwAlHMu",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Train Classifier",
+          "inspector widget": {}
+        },
+        {
+          "GID": 89,
+          "identifier": "nodes.Evaluation.TestModelNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 95,
+              "type": "data",
+              "label": "model",
+              "has widget": false
+            },
+            {
+              "GID": 96,
+              "type": "data",
+              "label": "test_data_loader",
+              "has widget": false
+            },
+            {
+              "GID": 97,
+              "type": "data",
+              "label": "loss_function",
+              "default": {
+                "GID": 98,
+                "identifier": "Data",
+                "serialized": "gASVEQAAAAAAAACMDWNyb3NzX2VudHJvcHmULg=="
+              },
+              "has widget": false
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 99,
+              "type": "data",
+              "label": "test_loss"
+            },
+            {
+              "GID": 100,
+              "type": "data",
+              "label": "predictions"
+            }
+          ],
+          "pos x": 2150.0,
+          "pos y": 480.0,
+          "main widget data": "gAR9lC4=",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Check Accuracy on Test Images",
+          "inspector widget": {}
+        },
+        {
+          "GID": 101,
+          "identifier": "nodes.Evaluation.EvaluateModelNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 104,
+              "type": "data",
+              "label": "model",
+              "has widget": false
+            },
+            {
+              "GID": 105,
+              "type": "data",
+              "label": "image_path",
+              "has widget": true,
+              "widget name": "image_path",
+              "widget pos": "besides",
+              "widget data": "gASVDQAAAAAAAAB9lIwDdmFslIwAlHMu"
+            },
+            {
+              "GID": 115,
+              "type": "data",
+              "label": "expected_class",
+              "has widget": true,
+              "widget name": "expected_class",
+              "widget pos": "besides",
+              "widget data": "gASVDQAAAAAAAAB9lIwDdmFslIwAlHMu"
+            }
+          ],
+          "outputs": [],
+          "pos x": 2150.0,
+          "pos y": 790.0,
+          "main widget data": "gASVEAAAAAAAAAB9lIwGcmVwb3J0lIwAlHMu",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Predict and Inspect a Test Image",
+          "inspector widget": {}
+        },
+        {
+          "GID": 132,
+          "identifier": "nodes.Data.ImagesToTensorNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 125,
+              "type": "data",
+              "label": "image_paths",
+              "has widget": true,
+              "widget name": "image_paths",
+              "widget pos": "besides",
+              "widget data": "gASVDQAAAAAAAAB9lIwDdmFslIwAlHMu"
+            },
+            {
+              "GID": 126,
+              "type": "data",
+              "label": "image_size",
+              "default": {
+                "GID": 127,
+                "identifier": "Data",
+                "serialized": "gARL4C4="
+              },
+              "has widget": true,
+              "widget name": "image_size",
+              "widget pos": "besides",
+              "widget data": "gASVEwAAAAAAAAB9lIwDdmFslEdAbAAAAAAAAHMu"
+            },
+            {
+              "GID": 128,
+              "type": "data",
+              "label": "normalize",
+              "default": {
+                "GID": 129,
+                "identifier": "Data",
+                "serialized": "gASILg=="
+              },
+              "has widget": true,
+              "widget name": "normalize",
+              "widget pos": "besides",
+              "widget data": "gASVEQAAAAAAAAB9lIwDdmFslIwEVHJ1ZZRzLg=="
+            },
+            {
+              "GID": 130,
+              "type": "data",
+              "label": "model",
+              "has widget": false
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 131,
+              "type": "data",
+              "label": "image_tensor"
+            }
+          ],
+          "main widget data": "gAR9lC4=",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Convert Training Images to Tensor",
+          "inspector widget": {},
+          "pos x": 635.0,
+          "pos y": 285.0
+        },
+        {
+          "GID": 137,
+          "identifier": "nodes.Data.TensorDatasetNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 133,
+              "type": "data",
+              "label": "",
+              "has widget": true,
+              "widget name": "",
+              "widget pos": "besides",
+              "widget data": "gAR9lC4="
+            },
+            {
+              "GID": 134,
+              "type": "data",
+              "label": "image_tensor",
+              "has widget": false
+            },
+            {
+              "GID": 135,
+              "type": "data",
+              "label": "label_tensor",
+              "has widget": false
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 136,
+              "type": "data",
+              "label": "dataset"
+            }
+          ],
+          "main widget data": "gAR9lC4=",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Build Training Dataset from Tensors",
+          "inspector widget": {},
+          "pos x": 1050.0,
+          "pos y": 401.0
+        },
+        {
+          "GID": 145,
+          "identifier": "nodes.Data.ImagesToTensorNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 138,
+              "type": "data",
+              "label": "image_paths",
+              "has widget": true,
+              "widget name": "image_paths",
+              "widget pos": "besides",
+              "widget data": "gASVDQAAAAAAAAB9lIwDdmFslIwAlHMu"
+            },
+            {
+              "GID": 139,
+              "type": "data",
+              "label": "image_size",
+              "default": {
+                "GID": 140,
+                "identifier": "Data",
+                "serialized": "gARL4C4="
+              },
+              "has widget": true,
+              "widget name": "image_size",
+              "widget pos": "besides",
+              "widget data": "gASVEwAAAAAAAAB9lIwDdmFslEdAbAAAAAAAAHMu"
+            },
+            {
+              "GID": 141,
+              "type": "data",
+              "label": "normalize",
+              "default": {
+                "GID": 142,
+                "identifier": "Data",
+                "serialized": "gASILg=="
+              },
+              "has widget": true,
+              "widget name": "normalize",
+              "widget pos": "besides",
+              "widget data": "gASVEQAAAAAAAAB9lIwDdmFslIwEVHJ1ZZRzLg=="
+            },
+            {
+              "GID": 143,
+              "type": "data",
+              "label": "model",
+              "has widget": false
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 144,
+              "type": "data",
+              "label": "image_tensor"
+            }
+          ],
+          "main widget data": "gAR9lC4=",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Convert Test Images to Tensor",
+          "inspector widget": {},
+          "pos x": 635.0,
+          "pos y": 640.0
+        },
+        {
+          "GID": 150,
+          "identifier": "nodes.Data.TensorDatasetNode",
+          "version": null,
+          "state data": "gAR9lC4=",
+          "additional data": {},
+          "inputs": [
+            {
+              "GID": 146,
+              "type": "data",
+              "label": "",
+              "has widget": true,
+              "widget name": "",
+              "widget pos": "besides",
+              "widget data": "gAR9lC4="
+            },
+            {
+              "GID": 147,
+              "type": "data",
+              "label": "image_tensor",
+              "has widget": false
+            },
+            {
+              "GID": 148,
+              "type": "data",
+              "label": "label_tensor",
+              "has widget": false
+            }
+          ],
+          "outputs": [
+            {
+              "GID": 149,
+              "type": "data",
+              "label": "dataset"
+            }
+          ],
+          "main widget data": "gAR9lC4=",
+          "unconnected ports hidden": false,
+          "collapsed": false,
+          "actions": {
+            "update shape": {
+              "method": "update_shape"
+            },
+            "hide unconnected ports": {
+              "method": "hide_unconnected_ports"
+            },
+            "change title": {
+              "method": "change_title"
+            }
+          },
+          "display title": "Build Test Dataset from Tensors",
+          "inspector widget": {},
+          "pos x": 1050.0,
+          "pos y": 756.0
+        }
+      ],
+      "connections": [
+        {
+          "parent node index": 0,
+          "output port index": 0,
+          "connected node": 2,
+          "connected input port index": 0
+        },
+        {
+          "parent node index": 1,
+          "output port index": 0,
+          "connected node": 2,
+          "connected input port index": 1
+        },
+        {
+          "parent node index": 1,
+          "output port index": 5,
+          "connected node": 7,
+          "connected input port index": 1
+        },
+        {
+          "parent node index": 2,
+          "output port index": 0,
+          "connected node": 5,
+          "connected input port index": 0
+        },
+        {
+          "parent node index": 3,
+          "output port index": 0,
+          "connected node": 5,
+          "connected input port index": 1
+        },
+        {
+          "parent node index": 4,
+          "output port index": 0,
+          "connected node": 6,
+          "connected input port index": 1
+        },
+        {
+          "parent node index": 5,
+          "output port index": 0,
+          "connected node": 6,
+          "connected input port index": 0
+        },
+        {
+          "parent node index": 5,
+          "output port index": 0,
+          "connected node": 7,
+          "connected input port index": 0
+        },
+        {
+          "parent node index": 1,
+          "output port index": 6,
+          "connected node": 7,
+          "connected input port index": 2
+        },
+        {
+          "parent node index": 1,
+          "output port index": 1,
+          "connected node": 8,
+          "connected input port index": 0
+        },
+        {
+          "parent node index": 0,
+          "output port index": 0,
+          "connected node": 8,
+          "connected input port index": 3
+        },
+        {
+          "parent node index": 8,
+          "output port index": 0,
+          "connected node": 9,
+          "connected input port index": 1
+        },
+        {
+          "parent node index": 1,
+          "output port index": 2,
+          "connected node": 9,
+          "connected input port index": 2
+        },
+        {
+          "parent node index": 9,
+          "output port index": 0,
+          "connected node": 3,
+          "connected input port index": 0
+        },
+        {
+          "parent node index": 1,
+          "output port index": 3,
+          "connected node": 10,
+          "connected input port index": 0
+        },
+        {
+          "parent node index": 0,
+          "output port index": 0,
+          "connected node": 10,
+          "connected input port index": 3
+        },
+        {
+          "parent node index": 10,
+          "output port index": 0,
+          "connected node": 11,
+          "connected input port index": 1
+        },
+        {
+          "parent node index": 1,
+          "output port index": 4,
+          "connected node": 11,
+          "connected input port index": 2
+        },
+        {
+          "parent node index": 11,
+          "output port index": 0,
+          "connected node": 4,
+          "connected input port index": 0
+        }
+      ],
+      "output data": [
+        {
+          "data": {
+            "GID": 106,
+            "identifier": "Data",
+            "serialized": "gAROLg=="
+          },
+          "dependent node outputs": [
+            2,
+            0
+          ]
+        },
+        {
+          "data": {
+            "GID": 107,
+            "identifier": "Data",
+            "serialized": "gAROLg=="
+          },
+          "dependent node outputs": [
+            3,
+            0
+          ]
+        },
+        {
+          "data": {
+            "GID": 108,
+            "identifier": "Data",
+            "serialized": "gAROLg=="
+          },
+          "dependent node outputs": [
+            4,
+            0
+          ]
+        },
+        {
+          "data": {
+            "GID": 109,
+            "identifier": "Data",
+            "serialized": "gAROLg=="
+          },
+          "dependent node outputs": [
+            5,
+            0
+          ]
+        },
+        {
+          "data": {
+            "GID": 110,
+            "identifier": "Data",
+            "serialized": "gAROLg=="
+          },
+          "dependent node outputs": [
+            5,
+            1
+          ]
+        },
+        {
+          "data": {
+            "GID": 111,
+            "identifier": "Data",
+            "serialized": "gAROLg=="
+          },
+          "dependent node outputs": [
+            6,
+            0
+          ]
+        },
+        {
+          "data": {
+            "GID": 112,
+            "identifier": "Data",
+            "serialized": "gAROLg=="
+          },
+          "dependent node outputs": [
+            6,
+            1
+          ]
+        }
+      ],
+      "flow view": {
+        "drawings": [],
+        "view size": [
+          10000.0,
+          7000.0
+        ]
+      }
+    }
+  },
+  "addons": {
+    "Logging": {
+      "GID": 3,
+      "version": "0.0.1",
+      "custom state": {}
+    },
+    "Variables": {
+      "GID": 4,
+      "version": "0.4",
+      "custom state": {
+        "18": {}
+      }
+    }
+  },
+  "state": "000000ff00000000fd00000002000000000000012c000002fcfc0200000001fc00000024000002fc0000013300fffffffa000000010200000002fb000000140066006c006f00770073005f0064006f0063006b0000000000ffffffff0000008500fffffffb00000014006e006f006400650073005f0064006f0063006b0100000000ffffffff0000013300ffffff00000003000005dc00000107fc0100000001fb000000160063006f006e0073006f006c00650044006f0063006b0000000000000005dc0000006300ffffff0000049c000002fc00000004000000040000000800000008fc00000000",
+  "flow_uis": {
+    "18": {
+      "state": "000000ff00000000fd0000000100000001000002fd000001acfc0200000001fc00000000000001ac0000000000fffffffaffffffff0200000006fb0000001c0069006e00730070006500630074006f0072005f0064006f0063006b0000000000ffffffff0000003400fffffffb000000220075006e0064006f005f0068006900730074006f00720079005f0064006f0063006b0000000000ffffffff0000005c00fffffffb0000001a00730065007400740069006e00670073005f0064006f0063006b0000000000ffffffff0000004200000042fb0000001c007600610072006900610062006c00650073005f0064006f0063006b0000000000ffffffff0000008500fffffffb00000016006c006f0067006700650072005f0064006f0063006b0000000000ffffffff0000004e00fffffffb000000160073006f0075007200630065005f0064006f0063006b0000000000ffffffff0000007200ffffff00000486000002c700000004000000040000000800000008fc00000000",
+      "view": {
+        "m11": 0.46,
+        "m12": 0.0,
+        "m13": 0.0,
+        "m21": 0.0,
+        "m22": 0.46,
+        "m23": 0.0,
+        "m31": 0.0,
+        "m32": 0.0,
+        "m33": 1.0,
+        "v_scroll": 0,
+        "h_scroll": 0
+      }
+    }
+  }
+}

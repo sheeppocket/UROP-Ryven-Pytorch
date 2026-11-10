@@ -1,0 +1,22 @@
+/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.vscode/
+.env
+.env.*
+
+/pytorch/nodes/pretrained_weights/
+*.pth
+*.pt
+
+# Earlier UROP materials kept in the local workspace.
+/RyvenCodeWorking/
+/RyvenCodeWorking.zip
+/UROP_Ryven_2025-main/
+/UROP_Ryven_2025-main.zip
+/HuiXin-UROP_REPORT.pdf
+/ZheMing-UROP_Report.pdf
+/Torch_Resnet.ipynb
+/pytorch/**/Torch_Resnet.ipynb
