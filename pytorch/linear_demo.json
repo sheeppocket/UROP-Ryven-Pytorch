@@ -172,7 +172,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Load Sample Data",
+          "display title": "Sample Dataset",
           "inspector widget": {}
         },
         {
@@ -239,7 +239,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Group Examples into Batches",
+          "display title": "DataLoader",
           "inspector widget": {}
         },
         {
@@ -408,7 +408,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Group Examples into Batches",
+          "display title": "DataLoader",
           "inspector widget": {}
         },
         {
@@ -470,7 +470,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Check Test Performance",
+          "display title": "Test Model",
           "inspector widget": {}
         }
       ],

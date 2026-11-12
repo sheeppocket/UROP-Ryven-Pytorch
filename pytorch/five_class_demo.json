@@ -79,7 +79,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Image Encoder for Code Export",
+          "display title": "Image Encoder",
           "inspector widget": {}
         },
         {
@@ -262,7 +262,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Image Folder for Remote Training",
+          "display title": "Image Folder",
           "inspector widget": {}
         },
         {
@@ -329,7 +329,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Group Examples into Batches",
+          "display title": "DataLoader",
           "inspector widget": {}
         },
         {

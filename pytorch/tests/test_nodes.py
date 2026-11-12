@@ -172,10 +172,15 @@ class NodeTests(unittest.TestCase):
             self.assertEqual(checkpoint['model_state_dict']['2.weight'].shape, (2, 5))
 
     def test_encoder_graph_exports_image_training_with_a_custom_head(self):
+        for architecture, width, classifier in (('resnet18', 512, 'fc'), ('mobilenet_v2', 1280, 'classifier')):
+            with self.subTest(architecture=architecture):
+                self.check_encoder_export(architecture, width, classifier)
+
+    def check_encoder_export(self, architecture, width, classifier):
         with tempfile.TemporaryDirectory() as directory:
             folder = Path(directory)
             image_folder = folder / 'train'
-            encoder = self.node('ImageEncoderNode', ['resnet18', 'DEFAULT', True])
+            encoder = self.node('ImageEncoderNode', [architecture, 'DEFAULT', True])
             hidden = self.node('DenseLayerNode', [None, 4, 'ReLU'])
             output = self.node('DenseLayerNode', [None, 2, 'None'])
             images = self.node('RemoteImageFolderNode', [str(image_folder)])
@@ -186,14 +191,14 @@ class NodeTests(unittest.TestCase):
                 (images, batches, 0), (batches, trainer, 1),
             ):
                 self.flow.connect_nodes(source.outputs[0], target.inputs[index])
-            with patch('torchvision.models.resnet18', side_effect=AssertionError('Encoder loaded locally')):
+            with patch(f'torchvision.models.{architecture}', side_effect=AssertionError('Encoder loaded locally')):
                 encoder.update()
                 images.update()
                 code = trainer.export_training_code()
             self.assertFalse(image_folder.exists())
-            self.assertIn('nn.Linear(512, 4)', code)
+            self.assertIn(f'nn.Linear({width}, 4)', code)
             self.assertIn('nn.Linear(4, 2)', code)
-            self.assertIn('encoder.fc = nn.Identity()', code)
+            self.assertIn(f'encoder.{classifier} = nn.Identity()', code)
             with self.assertRaisesRegex(ValueError, 'Copy Training Code'):
                 trainer.train()
 
@@ -205,19 +210,22 @@ class NodeTests(unittest.TestCase):
             script = {'__name__': 'image_training_export'}
             exec(compile(code, '<image training export>', 'exec'), script)
             models = script['models']
-            backbone = models.resnet18(weights=None)
-            bn_mean = backbone.bn1.running_mean.clone()
+            build_encoder = getattr(models, architecture)
+            weights = models.get_model_weights(build_encoder).DEFAULT
+            backbone = build_encoder(weights=None)
+            batch_norm = next(module for module in backbone.modules() if isinstance(module, torch.nn.BatchNorm2d))
+            bn_mean = batch_norm.running_mean.clone()
             # Exercise the frozen path without fetching weights in the test.
-            with patch.object(models, 'resnet18', return_value=backbone) as constructor:
+            with patch.object(models, architecture, return_value=backbone) as constructor:
                 script['SETTINGS']['output_checkpoint'] = str(folder / 'training_result.pth')
                 script['main']()
-                constructor.assert_called_once_with(weights=models.ResNet18_Weights.DEFAULT)
+                constructor.assert_called_once_with(weights=weights)
             self.assertFalse(backbone.training)
             self.assertFalse(any(parameter.requires_grad for parameter in backbone.parameters()))
-            self.assertTrue(torch.equal(backbone.bn1.running_mean, bn_mean))
+            self.assertTrue(torch.equal(batch_norm.running_mean, bn_mean))
             checkpoint = torch.load(folder / 'training_result.pth', weights_only=True)
             self.assertEqual(checkpoint['class_names'], ['blue', 'red'])
-            self.assertEqual(checkpoint['model_state_dict']['1.weight'].shape, (4, 512))
+            self.assertEqual(checkpoint['model_state_dict']['1.weight'].shape, (4, width))
 
     def test_invalid_batch_size(self):
         node = self.node('DataLoaderNode', [torch.utils.data.TensorDataset(torch.ones(2, 1)), 0, False])

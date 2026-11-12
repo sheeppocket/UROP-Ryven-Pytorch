@@ -111,6 +111,7 @@ for filename, expected in (
     project = Path(__file__).resolve().parents[1] / filename
     demo, = session.load(json.loads(project.read_text(encoding='utf-8')))
     for node in demo.nodes:
+        assert node.gui.display_title == node.title
         if isinstance(node, types['SampleDatasetNode']):
             node.gui.main_widget().load_button.click()
     trainer, = (node for node in demo.nodes if isinstance(node, (types['TrainModelNode'], types['TrainVAENode'])))
@@ -119,7 +120,26 @@ for filename, expected in (
     code = app.clipboard().text()
     assert expected in code, trainer.gui.main_widget().status_box.toPlainText()
     compile(code, filename, 'exec')
+    if filename == 'five_class_demo.json':
+        encoder, = (node for node in demo.nodes if isinstance(node, types['ImageEncoderNode']))
+        encoder.gui.input_widget(0).setCurrentText('mobilenet_v2')
+        trainer.gui.main_widget().copy_code_button.click()
+        code = app.clipboard().text()
+        assert 'encoder.classifier = nn.Identity()' in code
+        assert 'nn.Linear(1280, 32)' in code
     session.delete_flow(demo)
+
+project = Path(__file__).resolve().parents[1] / 'linear_demo.json'
+legacy_project = json.loads(project.read_text(encoding='utf-8'))
+flow_data, = legacy_project['flows'].values()
+batch_settings = [node for node in flow_data['nodes'] if node['identifier'].endswith('.DataLoaderNode')]
+batch_settings[0]['display title'] = 'Group Examples into Batches'
+batch_settings[1]['display title'] = 'Held-out batches'
+demo, = session.load(legacy_project)
+assert [node.gui.display_title for node in demo.nodes if isinstance(node, types['DataLoaderNode'])] == [
+    'DataLoader', 'Held-out batches',
+]
+session.delete_flow(demo)
 assert not errors, errors
 print('All four saved graphs opened and copied training code', flush=True)
 print('GUI SMOKE TEST PASSED', flush=True)

@@ -1,6 +1,6 @@
 # UROP visual machine learning
 
-Build a PyTorch model layer by layer in Ryven. Choose layer widths and activations, optionally add a ResNet encoder, then copy a standalone training script to run in Colab or another Python environment.
+Build a PyTorch model layer by layer in Ryven. Choose layer widths and activations, optionally add an image encoder, then copy a standalone training script to run in Colab or another Python environment.
 
 ![Ryven canvas with two input features, an eight-neuron ReLU layer, and a two-neuron output layer](docs/images/ryven-dense-layers.png)
 

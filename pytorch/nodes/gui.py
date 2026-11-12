@@ -16,6 +16,23 @@ from . import train_model as train_model_nodes
 
 class PyTorchGuiBase(NodeGUI):
     color = '#5e548e'
+    previous_titles = {
+        'DataLoader': ('Group Examples into Batches',),
+        'CSV File': ('CSV Dataset', 'CSV Dataset for Remote Training'),
+        'Image Folder': ('ImageFolder', 'Image Folder for Remote Training'),
+        'Fashion-MNIST': ('Fashion-MNIST for Remote Training',),
+        'Image Encoder': ('ResNet Encoder', 'Image Encoder for Code Export'),
+        'Sample Dataset': ('Load Sample Data',),
+        'Test Model': ('Check Test Performance',),
+        'VAE Latent Layer': ('Variational Latent',),
+    }
+
+    def load(self, data):
+        previous = self.previous_titles.get(self.node.title, ())
+        if data.get('display title') in previous:
+            data = {**data, 'display title': self.node.title}
+        super().load(data)
+
 
 def combo_box(items: list, init_index: int = 0, descr: str = ''):
     """Custom combo box widget with global popup, styled like QComboBox."""
@@ -349,7 +366,7 @@ class ImageEncoderNodeGui(PyTorchGuiBase):
     main_widget_class = NodeReportMainWidget
     main_widget_pos = 'between ports'
     input_widget_classes = {
-        'architecture': combo_box(list(dense_layers.RESNET_FEATURES), descr='ResNet to load in the generated script'),
+        'architecture': combo_box(list(dense_layers.IMAGE_ENCODERS), descr='Model to load in the generated script'),
         'weights': combo_box(list(dense_layers.ENCODER_WEIGHTS), descr='Pretrained or random initialization'),
         'freeze': combo_box(['True', 'False'], descr='Keep the encoder weights fixed during training'),
     }

@@ -5,7 +5,7 @@ from textwrap import dedent
 
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, default_collate
 
-from .dense_layers import DenseModelSpec
+from .dense_layers import IMAGE_ENCODERS, DenseModelSpec
 from .learning_samples import LINEAR_DATA, XOR_DATA, sample_split
 from .torch_utils_data import RemoteBatches, RemoteCsvDataset, RemoteImageFolder
 from .train_model import LOSS_FUNCTIONS, train_model, validate_dense_model
@@ -21,7 +21,7 @@ def training_code(model, loader, loss, optimizer, learning_rate, epochs):
             raise ValueError('Connect the training batches before copying training code.')
         if (type(loader.sampler) not in (RandomSampler, SequentialSampler) or loader.batch_size is None
                 or loader.collate_fn is not default_collate or getattr(loader.sampler, 'replacement', False)):
-            raise ValueError('Use Group Examples into Batches for the portable training loader.')
+            raise ValueError('Use the DataLoader node to configure training batches.')
     if loss not in LOSS_FUNCTIONS or optimizer not in ('Adam', 'SGD', 'RMSprop', 'AdamW'):
         raise ValueError('Choose a supported loss and optimizer')
     if not isfinite(learning_rate) or learning_rate <= 0 or epochs < 1:
@@ -47,7 +47,7 @@ def dense_training_code(model, loader, settings):
     encoder = model.encoder
     if encoder:
         if not isinstance(loader, RemoteBatches) or not isinstance(loader.dataset, RemoteImageFolder):
-            raise ValueError('Connect Image Folder for Remote Training through Group Examples into Batches.')
+            raise ValueError('Connect Image Folder to the DataLoader node.')
         if settings['loss'] != 'cross_entropy':
             raise ValueError('Image folder classification uses cross entropy.')
         imports += '\nfrom torchvision import models\nfrom torchvision.datasets import ImageFolder'
@@ -58,7 +58,7 @@ def dense_training_code(model, loader, settings):
         dataset_code = ENCODER_IMAGE_DATASET
     elif isinstance(loader, RemoteBatches):
         if not isinstance(loader.dataset, RemoteCsvDataset):
-            raise ValueError('Use a CSV for dense training, or connect Image Encoder to use an image folder.')
+            raise ValueError('Connect CSV File for dense training, or add an Image Encoder to use Image Folder.')
         imports = 'import csv\nfrom array import array\n\n' + imports
         imports += ', TensorDataset'
         data_config = f'DATA_PATH = {loader.dataset.path!r}'
@@ -86,9 +86,10 @@ def dense_training_code(model, loader, settings):
     container = 'nn.Sequential'
     if encoder:
         weights = 'ENCODER_WEIGHTS' if encoder.weights == 'DEFAULT' else 'None'
+        _, classifier = IMAGE_ENCODERS[encoder.architecture]
         model_setup.extend((
             f'    encoder = models.{encoder.architecture}(weights={weights})',
-            '    encoder.fc = nn.Identity()',
+            f'    encoder.{classifier} = nn.Identity()',
         ))
         modules.append('        encoder,')
         if encoder.frozen:

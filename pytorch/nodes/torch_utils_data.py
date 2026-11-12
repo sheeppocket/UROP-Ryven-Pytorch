@@ -34,7 +34,7 @@ RemoteCsvBatches = RemoteBatches
 class RemoteCsvDatasetNode(Node):
     """Specify a CSV path on the training machine. Ryven does not open the file."""
 
-    title = 'CSV Dataset for Remote Training'
+    title = 'CSV File'
     init_inputs = [NodeInputType(label='csv_path', default=Data('train.csv'))]
     init_outputs = [NodeOutputType(label='dataset')]
 
@@ -50,7 +50,7 @@ class RemoteCsvDatasetNode(Node):
 class RemoteImageFolderNode(Node):
     """Specify a folder with one subfolder per class on the training machine."""
 
-    title = 'Image Folder for Remote Training'
+    title = 'Image Folder'
     init_inputs = [NodeInputType(label='image_folder', default=Data('train'))]
     init_outputs = [NodeOutputType(label='dataset')]
 
@@ -66,7 +66,7 @@ class RemoteImageFolderNode(Node):
 class FashionMNISTNode(Node):
     """Download the training and test splits of Fashion-MNIST when the exported script runs."""
 
-    title = 'Fashion-MNIST for Remote Training'
+    title = 'Fashion-MNIST'
     init_inputs = [NodeInputType(label='data_root', default=Data('fashion-mnist-data'))]
     init_outputs = [NodeOutputType(label='dataset')]
 
@@ -83,7 +83,7 @@ class DataLoaderNode(Node):
     """Group a dataset into batches so the model can process several examples at once.
     Shuffling changes their order. Training and test datasets are grouped separately.
     """
-    title = "Group Examples into Batches"
+    title = "DataLoader"
     tags = ['dataloader', 'batch size']
     init_inputs = [
         NodeInputType(label="dataset"),

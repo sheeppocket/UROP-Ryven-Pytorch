@@ -9,12 +9,12 @@ from .training_export import dense_module_lines
 
 def vae_training_code(model, loader, learning_rate, epochs, kl_weight):
     if not isinstance(model, DenseModelSpec) or model.vae_encoder is None or not model.layers:
-        raise ValueError('Connect the last decoder layer from a Variational Latent node.')
+        raise ValueError('Connect the last decoder layer from a VAE Latent Layer node.')
     encoder = model.vae_encoder
     if encoder.input_features != 784 or model.layers[-1] != (784, 'None'):
         raise ValueError('Use 784 input features and a final decoder layer of 784 neurons with no activation.')
     if not isinstance(loader, RemoteBatches) or not isinstance(loader.dataset, RemoteFashionMNIST):
-        raise ValueError('Connect Fashion-MNIST through Group Examples into Batches.')
+        raise ValueError('Connect Fashion-MNIST through DataLoader.')
     if not isfinite(learning_rate) or learning_rate <= 0 or epochs < 1:
         raise ValueError('Learning rate and epochs must be positive.')
     if not isfinite(kl_weight) or kl_weight < 0:

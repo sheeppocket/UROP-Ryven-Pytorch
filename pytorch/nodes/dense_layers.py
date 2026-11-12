@@ -10,7 +10,13 @@ from .utils import boolean, value
 
 
 ACTIVATIONS = ('None', 'ReLU', 'LeakyReLU', 'GELU', 'Tanh', 'Sigmoid', 'Softmax')
-RESNET_FEATURES = {'resnet18': 512, 'resnet34': 512, 'resnet50': 2048}
+IMAGE_ENCODERS = {
+    # Output width after removing the original classifier, and its attribute name.
+    'resnet18': (512, 'fc'),
+    'resnet34': (512, 'fc'),
+    'resnet50': (2048, 'fc'),
+    'mobilenet_v2': (1280, 'classifier'),
+}
 ENCODER_WEIGHTS = ('DEFAULT', 'random')
 
 
@@ -117,13 +123,13 @@ class DenseLayerNode(Node):
 
 
 class ImageEncoderNode(Node):
-    """Describe a ResNet encoder for an exported image classifier. The generated
+    """Describe a torchvision encoder for an exported image classifier. The generated
     script loads the model and removes its original classifier.
     """
 
-    title = 'Image Encoder for Code Export'
+    title = 'Image Encoder'
     instructions = 'Choose an encoder, then connect Dense Layer nodes.'
-    tags = ['backbone', 'resnet', 'transfer learning']
+    tags = ['backbone', 'resnet', 'mobilenet', 'transfer learning']
     init_inputs = [
         NodeInputType(label='architecture', default=Data('resnet18')),
         NodeInputType(label='weights', default=Data('DEFAULT')),
@@ -141,8 +147,8 @@ class ImageEncoderNode(Node):
     def update_event(self, inp=-1):
         try:
             architecture = value(self, 0)
-            if not isinstance(architecture, str) or architecture not in RESNET_FEATURES:
-                raise ValueError('Choose a supported ResNet encoder.')
+            if not isinstance(architecture, str) or architecture not in IMAGE_ENCODERS:
+                raise ValueError('Choose a supported image encoder.')
             weights = value(self, 1)
             if weights not in ENCODER_WEIGHTS:
                 raise ValueError('Choose DEFAULT or random weights.')
@@ -153,7 +159,7 @@ class ImageEncoderNode(Node):
             self.set_output_val(0, Data(None))
             self.report_changed.emit(str(error))
             return
-        width = RESNET_FEATURES[architecture]
+        width, _ = IMAGE_ENCODERS[architecture]
         encoder = ImageEncoderSpec(architecture, weights, frozen)
         self.set_output_val(0, Data(DenseModelSpec(width, encoder=encoder)))
         mode = 'frozen' if frozen else 'trainable'

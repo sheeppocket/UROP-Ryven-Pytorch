@@ -10,7 +10,7 @@ class VariationalLatentNode(Node):
     variance for each latent dimension and samples a vector for the decoder.
     """
 
-    title = 'Variational Latent'
+    title = 'VAE Latent Layer'
     instructions = 'Connect the last dense encoder layer.'
     init_inputs = [
         NodeInputType(label='encoder'),

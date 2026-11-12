@@ -26,7 +26,7 @@ class SampleDatasetNode(Node):
     The two point datasets share the same features and differ in their labeling rule.
     """
 
-    title = 'Load Sample Data'
+    title = 'Sample Dataset'
     instructions = 'Choose a dataset, then load the examples.'
     options = (LINEAR_DATA, XOR_DATA)
     init_inputs = [NodeInputType(label='sample', default=Data(LINEAR_DATA))]

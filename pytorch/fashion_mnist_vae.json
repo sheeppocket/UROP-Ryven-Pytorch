@@ -173,7 +173,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Variational Latent",
+          "display title": "VAE Latent Layer",
           "inspector widget": {}
         },
         {
@@ -356,7 +356,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Fashion-MNIST for Remote Training",
+          "display title": "Fashion-MNIST",
           "inspector widget": {}
         },
         {
@@ -423,7 +423,7 @@
               "method": "change_title"
             }
           },
-          "display title": "Group Examples into Batches",
+          "display title": "DataLoader",
           "inspector widget": {}
         },
         {

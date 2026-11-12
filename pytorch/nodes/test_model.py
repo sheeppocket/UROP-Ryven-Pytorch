@@ -10,7 +10,7 @@ class TestModelNode(Node):
     whose predicted class matches the label. Testing leaves the model weights fixed.
     """
 
-    title = "Check Test Performance"
+    title = "Test Model"
     tags = ['test model', 'test accuracy']
     instructions = 'Waiting for model and test batches'
     init_inputs = [NodeInputType(label="model"),
