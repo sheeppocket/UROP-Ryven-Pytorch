@@ -2,13 +2,6 @@
 from ryvencore import Data
 
 
-class TransientData(Data):
-    """Save as empty Data so the graph can rebuild derived values when reopened."""
-
-    def get_data(self):
-        return None
-
-
 def value(node, index, default=None):
     data = node.input(index)
     result = data.payload if isinstance(data, Data) else data

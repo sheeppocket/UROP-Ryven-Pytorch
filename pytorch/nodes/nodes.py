@@ -1,18 +1,11 @@
 from ryven.node_env import *
 
-from .torch_utils_data import (
-    MakeTensorNode, TensorDatasetNode, DataLoaderNode, RemoteCsvDatasetNode, RemoteImageFolderNode,
-)
+from .torch_utils_data import DataLoaderNode, FashionMNISTNode, RemoteCsvDatasetNode, RemoteImageFolderNode
 from .dense_layers import DenseInputNode, DenseLayerNode, ImageEncoderNode
-from .models import ModelsNode
 from .train_model import TrainModelNode
-from .weights import PresetWeightsNode
 from .test_model import TestModelNode
-from .image_nodes import ImagesToTensorNode, EvaluateModelNode
-from .frozen_classifier import FrozenResNetClassifierNode
-from .digits_demo import DigitsDemoNode
-from .image_folder_split import ImageFolderPathsNode, ImageFolderSplitNode
-from .learning_samples import SampleDatasetNode, SampleModelNode
+from .learning_samples import SampleDatasetNode
+from .vae import TrainVAENode, VariationalLatentNode
 
 def export_group(category, node_types):
     export_nodes(node_types, sub_pkg_name=category)
@@ -24,30 +17,22 @@ def export_group(category, node_types):
 
 
 export_group('Data', [
-    MakeTensorNode,
-    TensorDatasetNode,
     DataLoaderNode,
-    ImagesToTensorNode,
-    ImageFolderPathsNode,
-    ImageFolderSplitNode,
+    FashionMNISTNode,
     SampleDatasetNode,
     RemoteCsvDatasetNode,
     RemoteImageFolderNode,
 ])
 
 export_group('Model Setup', [
-    ModelsNode,
-    PresetWeightsNode,
-    FrozenResNetClassifierNode,
-    SampleModelNode,
     DenseInputNode,
     DenseLayerNode,
     ImageEncoderNode,
+    VariationalLatentNode,
 ])
 
-export_group('Training', [TrainModelNode])
-export_group('Evaluation', [TestModelNode, EvaluateModelNode])
-export_group('Legacy', [DigitsDemoNode])
+export_group('Training', [TrainModelNode, TrainVAENode])
+export_group('Evaluation', [TestModelNode])
 
 @on_gui_load
 def load_gui():

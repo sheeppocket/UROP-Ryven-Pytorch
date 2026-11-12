@@ -76,6 +76,8 @@ class TrainModelNode(Node):
 
 
 def validate_dense_model(model, loss):
+    if model.vae_encoder is not None:
+        raise ValueError('Connect the last decoder layer to Train VAE.')
     if not model.layers:
         raise ValueError('Connect the last Dense Layer to Train Model.')
     neurons, activation = model.layers[-1]

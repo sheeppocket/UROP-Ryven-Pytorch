@@ -39,7 +39,7 @@ def main():
         'torch==2.4.1+cpu', 'torchvision==0.19.1+cpu',
     ], check=True)
     subprocess.run([*pip, 'check'], check=True)
-    print('Installation complete. Open 01-blank-canvas or one of the preset launchers.')
+    print('Installation complete. Run bash open.sh or pass a preset project file.')
 
 
 if __name__ == '__main__':

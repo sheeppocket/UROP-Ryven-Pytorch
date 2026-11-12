@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, replace
 
 from ryven.node_env import Data, Node, NodeInputType, NodeOutputType
@@ -24,6 +26,7 @@ class DenseModelSpec:
     input_features: int
     layers: tuple[tuple[int, str], ...] = ()
     encoder: ImageEncoderSpec | None = None
+    vae_encoder: DenseModelSpec | None = None
 
     def linear_layers(self):
         input_width = self.input_features
@@ -75,11 +78,11 @@ class DenseInputNode(Node):
 
 class DenseLayerNode(Node):
     """Append a fully connected layer and an optional activation. Its input width
-    comes from the preceding layer or Dense Input.
+    comes from the connected architecture.
     """
 
     title = 'Dense Layer'
-    instructions = 'Connect Dense Input, Image Encoder, or another Dense Layer.'
+    instructions = 'Connect an input, encoder, latent node, or another Dense Layer.'
     init_inputs = [
         NodeInputType(label='previous'),
         NodeInputType(label='neurons', default=Data(8)),
@@ -90,6 +93,9 @@ class DenseLayerNode(Node):
     def __init__(self, params):
         super().__init__(params)
         self.report_changed = Event(str)
+
+    def rebuilt(self):
+        self.update()
 
     def update_event(self, inp=-1):
         previous = value(self, 0)

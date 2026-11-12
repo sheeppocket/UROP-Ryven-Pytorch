@@ -8,6 +8,7 @@ __pycache__/
 .env.*
 
 /pytorch/nodes/pretrained_weights/
+/fashion-mnist-data/
 *.pth
 *.pt
 
