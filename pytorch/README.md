@@ -4,11 +4,11 @@ Import `nodes/nodes.py` in Ryven's node-package dialog. The node picker groups t
 
 ## Install and open Ryven
 
-Use 64-bit Python 3.10. On Windows, include the Python Launcher if you are setting up Python for the first time.
-
-1. **Windows:** open [`launchers/windows`](../launchers/windows) in File Explorer and double-click `00-install.cmd`. **Git Bash or x86-64 Linux:** from the workspace root, run `bash launchers/bash/00-install.sh`.
-2. The installer creates or reuses the workspace's `.venv` and installs the pinned Ryven, Qt, and PyTorch CPU packages. First-time setup needs internet access for the package downloads.
+1. On **x64 Windows**, open [`launchers/windows`](../launchers/windows) in File Explorer and double-click `00-install.cmd`. In **Git Bash**, run `bash launchers/bash/00-install.sh` from the workspace root. On **x86-64 Linux**, install Python 3.10 first, then run the same Bash command.
+2. Windows setup reuses a compatible Python 3.10 if available. Otherwise, it downloads and verifies the official Python 3.10.11 installer and installs it for your account under `%LOCALAPPDATA%\UROP\Python310`. Setup then creates or reuses `.venv` and installs the pinned Ryven, Qt, and PyTorch CPU packages. First-time setup needs internet access.
 3. Choose a launcher from the table below. Double-click the Windows file, or run `bash launchers/bash/<filename>` from the workspace root. Each launcher starts in the workspace automatically so the graph can find its node package and sample files.
+
+This setup uses Python 3.10 for the project's PySide2 version. Python 3.10 has reached end of support, and 3.10.11 was the last release with a Windows installer. [Python release notes](https://www.python.org/downloads/release/python-31022/)
 
 ## Start with a preset
 
@@ -119,9 +119,20 @@ The bundled photos are a [DeepWeeds teaching subset](demo_data/deepweeds/README.
 
 To use your own images, replace `image_folder` and `test_folder` in **Find Labeled Images**. Use one subfolder per class and the same class names in both folders. Leave `test_folder` blank to let Ryven set aside about 20% of each class, with at least one image per split. Automatic splitting requires at least two images per class.
 
-## Copy training code
+## Build a dense model and train it in Colab
 
-Code export is available for the image-model workflow. The synthetic lessons above include short PyTorch examples for their models and training steps.
+1. Open the **Blank canvas**. Add **Dense Input** and set **features** to the number of numeric inputs per example.
+2. Connect **Dense Input** → **Dense Layer**. Set **neurons** and **activation** on the layer. Connect each additional **Dense Layer** to the previous layer, then connect the final layer's **model** output to **Train Model**. Each layer takes its input width from the preceding node. For two-class classification, try eight neurons with **ReLU** followed by two neurons with **None**, and keep **cross_entropy** selected.
+3. Connect **CSV Dataset for Remote Training** → **Group Examples into Batches** → **Train Model**. Enter the CSV path as it will appear on the training machine, such as `/content/train.csv` in Colab. Set the batch size, shuffling, loss, optimizer, learning rate, and epochs in the graph. Ryven only needs the file path.
+4. Click **Copy Training Code**. Upload the CSV to Colab or make it available on the training machine, paste the code into a cell or a Python file, and run it. You can edit `DATA_PATH` in the copied script. The script uses CUDA when available, prints the loss for each epoch, and saves `training_result.pth` with the model weights and loss history.
+
+The CSV needs a header row followed by numeric data. Put feature columns first and target columns last. For **cross_entropy**, use one target column of zero-based integer class indices. For the other losses, use one numeric target column per output neuron. The script loads the CSV into memory on the training machine and moves individual batches to the selected device.
+
+To try the workflow with data included in the generated script, connect **Load Sample Data** → **Group Examples into Batches** → **Train Model** instead. Choose **Linear boundary** or **XOR quadrants**, click **Load Examples**, and use two input features with **cross_entropy**. With these small samples, you can also click **Train** to run locally in Ryven.
+
+## Copy image-model training code
+
+To build your own classifier layers and set up the encoder on the training machine, use [Image Encoder for Code Export](../README.md#3-image-classifier-with-a-backbone). The steps below apply to the editable CNN presets and other graphs that load a vision model in Ryven.
 
 1. Load the model and training images, then click **Copy Training Code** on **Train Model**. The clipboard gets a standalone PyTorch script with the selected model, weights, training split, preprocessing, batch settings, loss, optimizer, and epochs. It starts a fresh training run from the configured starting weights.
 2. Paste the script into a Colab cell or a local Python file. The script uses CUDA when available and prints the device, epoch progress, and mean loss. Make the training class folder structure available and point `DATA_ROOT` at it. The script keeps the original training file list. If you used a custom starting checkpoint, make that file available too and update `initial_checkpoint` if needed.

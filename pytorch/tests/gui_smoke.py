@@ -122,6 +122,31 @@ export_widget.copy_code_button.click()
 assert app.clipboard().text() == copied_code
 assert 'Could not copy training code' in export_widget.status_box.toPlainText()
 print('Digit choices, classifier setup, and clipboard export passed', flush=True)
+dense_input = nodes['DenseInputNode']
+dense_hidden = nodes['DenseLayerNode']
+dense_output = flow.create_node(types['DenseLayerNode'])
+dense_trainer = flow.create_node(types['TrainModelNode'])
+csv_source = nodes['RemoteCsvDatasetNode']
+csv_batches = flow.create_node(types['DataLoaderNode'])
+flow.connect_nodes(dense_input.outputs[0], dense_hidden.inputs[0])
+flow.connect_nodes(dense_hidden.outputs[0], dense_output.inputs[0])
+flow.connect_nodes(dense_output.outputs[0], dense_trainer.inputs[0])
+flow.connect_nodes(csv_source.outputs[0], csv_batches.inputs[0])
+flow.connect_nodes(csv_batches.outputs[0], dense_trainer.inputs[1])
+dense_input.gui.input_widget(0).setText('3')
+dense_hidden.gui.input_widget(1).setText('6')
+dense_hidden.gui.input_widget(2).setCurrentText('GELU')
+dense_output.gui.input_widget(1).setText('2')
+dense_output.gui.input_widget(2).setCurrentText('None')
+csv_source.gui.input_widget(0).setText('/content/data.csv')
+dense_trainer.gui.main_widget().copy_code_button.click()
+dense_code = app.clipboard().text()
+compile(dense_code, '<clipboard dense training export>', 'exec')
+assert "DATA_PATH = '/content/data.csv'" in dense_code
+assert 'nn.Linear(3, 6)' in dense_code
+assert 'nn.GELU()' in dense_code
+assert 'nn.Linear(6, 2)' in dense_code
+print('Dense layer settings propagated to the clipboard export', flush=True)
 evaluation = nodes['EvaluateModelNode']
 flow.connect_nodes(model_node.outputs[0], evaluation.inputs[0])
 evaluation_widget = wrapper.flow_views[flow].node_items[evaluation].main_widget

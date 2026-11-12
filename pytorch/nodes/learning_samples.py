@@ -67,6 +67,7 @@ class SampleDatasetNode(Node):
 
         generator = torch.Generator().manual_seed(42)
         train = sample_split(sample, 128, generator)
+        train._ryven_sample = sample
         test = sample_split(sample, 64, generator)
         shape = ' × '.join(str(size) for size in train.tensors[0].shape[1:])
         self.report = f'{len(train)} train · {len(test)} test\nInput per example: {shape}'

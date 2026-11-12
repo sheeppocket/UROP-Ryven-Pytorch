@@ -752,6 +752,7 @@ from . import image_nodes as image_nodes_nodes
 from . import digits_demo as digits_demo_nodes
 from . import image_folder_split as image_folder_split_nodes
 from . import learning_samples
+from . import dense_layers
 from . import frozen_classifier as frozen_classifier_nodes
 from . import test_model as test_model_nodes
 
@@ -829,6 +830,62 @@ class DataLoaderNodeGui(PyTorchGuiBase):
     init_input_widgets = {
         1: {'name': 'batch_size', 'pos': 'besides'},
         2: {'name': 'shuffle', 'pos': 'besides'}
+    }
+
+
+@node_gui(torch_utils_data_nodes.RemoteCsvDatasetNode)
+class RemoteCsvDatasetNodeGui(PyTorchGuiBase):
+    input_widget_classes = {
+        'csv_path': evaled_line_edit('train.csv', 'CSV path on the machine running the generated script'),
+    }
+    init_input_widgets = {0: {'name': 'csv_path', 'pos': 'besides'}}
+
+
+@node_gui(dense_layers.DenseInputNode)
+class DenseInputNodeGui(PyTorchGuiBase):
+    main_widget_class = NodeReportMainWidget
+    main_widget_pos = 'between ports'
+    input_widget_classes = {
+        'features': evaled_line_edit('2', 'Number of input features per example'),
+    }
+    init_input_widgets = {0: {'name': 'features', 'pos': 'besides'}}
+
+
+@node_gui(torch_utils_data_nodes.RemoteImageFolderNode)
+class RemoteImageFolderNodeGui(PyTorchGuiBase):
+    input_widget_classes = {
+        'image_folder': evaled_line_edit('train', 'Class folders on the machine running the generated script'),
+    }
+    init_input_widgets = {0: {'name': 'image_folder', 'pos': 'besides'}}
+
+
+@node_gui(dense_layers.ImageEncoderNode)
+class ImageEncoderNodeGui(PyTorchGuiBase):
+    main_widget_class = NodeReportMainWidget
+    main_widget_pos = 'between ports'
+    input_widget_classes = {
+        'architecture': combo_box(list(dense_layers.RESNET_FEATURES), descr='ResNet to load in the generated script'),
+        'weights': combo_box(list(dense_layers.ENCODER_WEIGHTS), descr='Pretrained or random initialization'),
+        'freeze': combo_box(['True', 'False'], descr='Keep the encoder weights fixed during training'),
+    }
+    init_input_widgets = {
+        0: {'name': 'architecture', 'pos': 'besides'},
+        1: {'name': 'weights', 'pos': 'besides'},
+        2: {'name': 'freeze', 'pos': 'besides'},
+    }
+
+
+@node_gui(dense_layers.DenseLayerNode)
+class DenseLayerNodeGui(PyTorchGuiBase):
+    main_widget_class = NodeReportMainWidget
+    main_widget_pos = 'between ports'
+    input_widget_classes = {
+        'neurons': evaled_line_edit('8', 'Number of neurons in this layer'),
+        'activation': combo_box(list(dense_layers.ACTIVATIONS), init_index=1, descr='Activation after this layer'),
+    }
+    init_input_widgets = {
+        1: {'name': 'neurons', 'pos': 'besides'},
+        2: {'name': 'activation', 'pos': 'besides'},
     }
 
 
@@ -1084,9 +1141,9 @@ class TrainingWorker(QThread):
         self.wait()
 
     def run(self):
-        from .train_model import train_model
+        from .train_model import train_configured_model
         try:
-            model, history = train_model(*self.training_inputs,
+            model, history = train_configured_model(*self.training_inputs,
                 cancelled=self.isInterruptionRequested,
                 progress=lambda epoch, epochs, loss: self.progress.emit(
                     f'Epoch {epoch}/{epochs} loss={loss:.4f}'))

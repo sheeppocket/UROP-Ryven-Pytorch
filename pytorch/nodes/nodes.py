@@ -1,6 +1,9 @@
 from ryven.node_env import *
 
-from .torch_utils_data import MakeTensorNode, TensorDatasetNode, DataLoaderNode
+from .torch_utils_data import (
+    MakeTensorNode, TensorDatasetNode, DataLoaderNode, RemoteCsvDatasetNode, RemoteImageFolderNode,
+)
+from .dense_layers import DenseInputNode, DenseLayerNode, ImageEncoderNode
 from .models import ModelsNode
 from .train_model import TrainModelNode
 from .weights import PresetWeightsNode
@@ -28,6 +31,8 @@ export_group('Data', [
     ImageFolderPathsNode,
     ImageFolderSplitNode,
     SampleDatasetNode,
+    RemoteCsvDatasetNode,
+    RemoteImageFolderNode,
 ])
 
 export_group('Model Setup', [
@@ -35,6 +40,9 @@ export_group('Model Setup', [
     PresetWeightsNode,
     FrozenResNetClassifierNode,
     SampleModelNode,
+    DenseInputNode,
+    DenseLayerNode,
+    ImageEncoderNode,
 ])
 
 export_group('Training', [TrainModelNode])

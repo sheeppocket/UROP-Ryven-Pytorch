@@ -2,6 +2,8 @@ from ryven.node_env import *
 import torch
 import torch.nn as nn
 from .utils import value, clear_outputs
+from .dense_layers import DenseModelSpec
+from .torch_utils_data import RemoteBatches
 
 LOSS_FUNCTIONS = {
     'cross_entropy': nn.CrossEntropyLoss,
@@ -60,7 +62,7 @@ class TrainModelNode(Node):
         self.trained_model = None
         clear_outputs(self)
         model, loader, loss, optimizer, lr, epochs = self.training_inputs()
-        trained, history = train_model(model, loader, loss, optimizer, lr, epochs, progress)
+        trained, history = train_configured_model(model, loader, loss, optimizer, lr, epochs, progress)
         self.trained_model = trained
         self.set_output_val(0, Data(trained))
         self.set_output_val(1, Data(history))
@@ -71,6 +73,25 @@ class TrainModelNode(Node):
         self.revision += 1
         self.trained_model = None
         clear_outputs(self)
+
+
+def validate_dense_model(model, loss):
+    if not model.layers:
+        raise ValueError('Connect the last Dense Layer to Train Model.')
+    neurons, activation = model.layers[-1]
+    if loss == 'cross_entropy' and neurons < 2:
+        raise ValueError('Cross entropy requires at least two output neurons.')
+    if loss in ('cross_entropy', 'bce_logits') and activation in ('Sigmoid', 'Softmax'):
+        raise ValueError('Choose None as the output activation when training with logits.')
+
+
+def train_configured_model(model, loader, loss, *args, **kwargs):
+    if isinstance(loader, RemoteBatches) or (isinstance(model, DenseModelSpec) and model.encoder):
+        raise ValueError('Use Copy Training Code and run the script on the training machine.')
+    if isinstance(model, DenseModelSpec):
+        validate_dense_model(model, loss)
+        model = model.build_model()
+    return train_model(model, loader, loss, *args, **kwargs)
 
 
 def train_model(model, loader, loss_key='cross_entropy', optimizer_name='Adam',

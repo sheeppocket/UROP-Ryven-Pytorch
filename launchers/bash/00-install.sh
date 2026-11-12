@@ -4,17 +4,7 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.."
 
 case "$OSTYPE" in
     msys*|cygwin*)
-        if [[ -x .venv/Scripts/python.exe ]]; then
-            exec .venv/Scripts/python.exe launchers/install.py
-        fi
-        local_python="${LOCALAPPDATA:-}/Programs/Python/Python310/python.exe"
-        local_python="${local_python//\\//}"
-        if [[ -x "$local_python" ]]; then
-            exec "$local_python" launchers/install.py
-        fi
-        if py -3.10 --version >/dev/null 2>&1; then
-            exec py -3.10 launchers/install.py
-        fi
+        exec powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File launchers/windows/_install.ps1
         ;;
     *)
         if [[ -x .venv/bin/python ]]; then
@@ -26,5 +16,5 @@ case "$OSTYPE" in
         ;;
 esac
 
-printf '%s\n' 'Install 64-bit Python 3.10 first. On Windows, include the Python Launcher.' >&2
+printf '%s\n' 'Install 64-bit Python 3.10 first.' >&2
 exit 1

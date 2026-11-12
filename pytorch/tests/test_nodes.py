@@ -4,8 +4,11 @@ os.environ['RYVEN_MODE'] = 'no-gui'
 import importlib
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 import torch
 from PIL import Image
 from ryvencore import Data, Node, NodeOutputType, Session
@@ -91,6 +94,101 @@ class NodeTests(unittest.TestCase):
                 model.update()
                 for key, weight in self.output(model).state_dict().items():
                     self.assertTrue(torch.equal(weight, initial_weights[key]))
+
+    def test_dense_graph_exports_standalone_csv_training_after_reload(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            csv_path = folder / 'training data.csv'
+            features = self.node('DenseInputNode', [2])
+            hidden = self.node('DenseLayerNode', [None, 8, 'Tanh'])
+            output = self.node('DenseLayerNode', [None, 2, 'None'])
+            remote_data = self.node('RemoteCsvDatasetNode', [str(csv_path)])
+            loader = self.node('DataLoaderNode', [None, 2, True])
+            trainer = self.node('TrainModelNode', [None, None, 'cross_entropy', 'AdamW', 0.01, 2])
+            features.update()
+            remote_data.update()
+            self.flow.connect_nodes(features.outputs[0], hidden.inputs[0])
+            self.flow.connect_nodes(hidden.outputs[0], output.inputs[0])
+            self.flow.connect_nodes(output.outputs[0], trainer.inputs[0])
+            self.flow.connect_nodes(remote_data.outputs[0], loader.inputs[0])
+            self.flow.connect_nodes(loader.outputs[0], trainer.inputs[1])
+
+            hidden.inputs[1].default = Data(5)
+            hidden.update(1)
+            code = trainer.export_training_code()
+            self.assertIn('nn.Linear(2, 5)', code)
+            self.assertIn('nn.Tanh()', code)
+            self.assertIn('nn.Linear(5, 2)', code)
+            self.assertFalse(csv_path.exists())
+            with self.assertRaisesRegex(ValueError, 'Copy Training Code'):
+                trainer.train()
+
+            saved = json.loads(json.dumps(self.session.serialize()))
+            session = Session()
+            session.register_node_types(CLASSES)
+            flow, = session.load(saved)
+            restored = next(node for node in flow.nodes if isinstance(node, TYPES['TrainModelNode']))
+            self.assertEqual(restored.export_training_code(), code)
+
+            csv_path.write_text('x,y,label\n-1,0,0\n-1,1,0\n1,0,1\n1,1,1\n', encoding='utf-8')
+            script_path = folder / 'train_dense.py'
+            script_path.write_text(code, encoding='utf-8')
+            result = subprocess.run([sys.executable, str(script_path)], cwd=folder,
+                                    capture_output=True, text=True, timeout=60)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('Epoch 2/2', result.stdout)
+            checkpoint = torch.load(folder / 'training_result.pth', weights_only=True)
+            self.assertEqual(len(checkpoint['loss_history']), 2)
+            self.assertEqual(checkpoint['model_state_dict']['0.weight'].shape, (5, 2))
+            self.assertEqual(checkpoint['model_state_dict']['2.weight'].shape, (2, 5))
+
+    def test_encoder_graph_exports_image_training_with_a_custom_head(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            image_folder = folder / 'train'
+            encoder = self.node('ImageEncoderNode', ['resnet18', 'DEFAULT', True])
+            hidden = self.node('DenseLayerNode', [None, 4, 'ReLU'])
+            output = self.node('DenseLayerNode', [None, 2, 'None'])
+            images = self.node('RemoteImageFolderNode', [str(image_folder)])
+            batches = self.node('DataLoaderNode', [None, 2, True])
+            trainer = self.node('TrainModelNode')
+            for source, target, index in (
+                (encoder, hidden, 0), (hidden, output, 0), (output, trainer, 0),
+                (images, batches, 0), (batches, trainer, 1),
+            ):
+                self.flow.connect_nodes(source.outputs[0], target.inputs[index])
+            with patch('torchvision.models.resnet18', side_effect=AssertionError('Encoder loaded locally')):
+                encoder.update()
+                images.update()
+                code = trainer.export_training_code()
+            self.assertFalse(image_folder.exists())
+            self.assertIn('nn.Linear(512, 4)', code)
+            self.assertIn('nn.Linear(4, 2)', code)
+            self.assertIn('encoder.fc = nn.Identity()', code)
+            with self.assertRaisesRegex(ValueError, 'Copy Training Code'):
+                trainer.train()
+
+            for category, color in (('blue', 'blue'), ('red', 'red')):
+                class_folder = image_folder / category
+                class_folder.mkdir(parents=True)
+                Image.new('RGB', (28, 28), color).save(class_folder / 'example.png')
+
+            script = {'__name__': 'image_training_export'}
+            exec(compile(code, '<image training export>', 'exec'), script)
+            models = script['models']
+            backbone = models.resnet18(weights=None)
+            bn_mean = backbone.bn1.running_mean.clone()
+            # Exercise the frozen path without fetching weights in the test.
+            with patch.object(models, 'resnet18', return_value=backbone) as constructor:
+                script['SETTINGS']['output_checkpoint'] = str(folder / 'training_result.pth')
+                script['main']()
+                constructor.assert_called_once_with(weights=models.ResNet18_Weights.DEFAULT)
+            self.assertFalse(backbone.training)
+            self.assertFalse(any(parameter.requires_grad for parameter in backbone.parameters()))
+            self.assertTrue(torch.equal(backbone.bn1.running_mean, bn_mean))
+            checkpoint = torch.load(folder / 'training_result.pth', weights_only=True)
+            self.assertEqual(checkpoint['class_names'], ['blue', 'red'])
+            self.assertEqual(checkpoint['model_state_dict']['1.weight'].shape, (4, 512))
 
     def test_tensor_dtypes_and_fills(self):
         for dtype in ('float32', 'float64', 'float16', 'int32', 'int64', 'bool'):

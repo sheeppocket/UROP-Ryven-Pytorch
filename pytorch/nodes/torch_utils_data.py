@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from ryven.node_env import *
 from .utils import TransientData, value, boolean, clear_outputs
 import torch
@@ -103,6 +105,59 @@ class TensorDatasetNode(Node):
         data_type = TransientData if hasattr(image_tensor, '_ryven_image_recipe') else Data
         self.set_output_val(0, data_type(self.dataset))
 
+@dataclass(frozen=True)
+class RemoteCsvDataset:
+    path: str
+
+
+@dataclass(frozen=True)
+class RemoteImageFolder:
+    path: str
+
+
+@dataclass(frozen=True)
+class RemoteBatches:
+    dataset: RemoteCsvDataset | RemoteImageFolder
+    batch_size: int
+    shuffle: bool
+
+
+# Earlier saved graphs may contain serialized CSV batch settings under this name.
+RemoteCsvBatches = RemoteBatches
+
+
+class RemoteCsvDatasetNode(Node):
+    """Specify a CSV path on the training machine. Ryven does not open the file."""
+
+    title = 'CSV Dataset for Remote Training'
+    init_inputs = [NodeInputType(label='csv_path', default=Data('train.csv'))]
+    init_outputs = [NodeOutputType(label='dataset')]
+
+    def place_event(self):
+        self.update()
+
+    def update_event(self, inp=-1):
+        path = value(self, 0)
+        dataset = RemoteCsvDataset(path.strip()) if isinstance(path, str) and path.strip() else None
+        self.set_output_val(0, Data(dataset))
+
+
+class RemoteImageFolderNode(Node):
+    """Specify a folder with one subfolder per class on the training machine."""
+
+    title = 'Image Folder for Remote Training'
+    init_inputs = [NodeInputType(label='image_folder', default=Data('train'))]
+    init_outputs = [NodeOutputType(label='dataset')]
+
+    def place_event(self):
+        self.update()
+
+    def update_event(self, inp=-1):
+        path = value(self, 0)
+        dataset = RemoteImageFolder(path.strip()) if isinstance(path, str) and path.strip() else None
+        self.set_output_val(0, Data(dataset))
+
+
 class DataLoaderNode(Node):
     """Group a dataset into batches so the model can process several examples at once.
     Shuffling changes their order. Training and test datasets are grouped separately.
@@ -133,8 +188,11 @@ class DataLoaderNode(Node):
             batch_size = int(value(self, 1, 32))
             if batch_size <= 0:
                 raise ValueError('Batch size must be positive')
-            self.dataloader = DataLoader(dataset, batch_size=batch_size,
-                                         shuffle=boolean(value(self, 2, False)))
+            shuffle = boolean(value(self, 2, False))
+            if isinstance(dataset, (RemoteCsvDataset, RemoteImageFolder)):
+                self.set_output_val(0, Data(RemoteBatches(dataset, batch_size, shuffle)))
+                return
+            self.dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
             data_type = TransientData if isinstance(data, TransientData) else Data
             self.set_output_val(0, data_type(self.dataloader))
         except Exception as error:
