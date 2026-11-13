@@ -10,6 +10,6 @@ See the [installation instructions](../docs/Guide.md#install-and-open-ryven).
 
 See the [preset project files](../docs/Presets.md) and [model-building walkthroughs](../docs/Guide.md#build-a-dense-classifier).
 
-## Run verification
+## Architecture
 
-See the Project Guide for the [architecture](../docs/Guide.md#architecture) and [test commands](../docs/Guide.md#run-the-checks).
+See the [architecture section of the Project Guide](../docs/Guide.md#architecture).

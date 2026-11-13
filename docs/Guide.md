@@ -12,7 +12,6 @@ Ryven passes values between connected nodes on a canvas. In this project, the mo
 - [Use image folders in Google Drive](#use-image-folders-in-google-drive)
 - [Architecture](#architecture)
 - [Change a node or export](#change-a-node-or-export)
-- [Run the checks](#run-the-checks)
 - [Project origins](#project-origins)
 
 ## Install and open Ryven
@@ -153,17 +152,6 @@ The image encoder is a configuration value while the graph is open. The exported
 1. Define the node's inputs, outputs, and validation in its Python module. Register a new node in `nodes.py` and add its editable controls in `gui.py`.
 2. For a new exportable layer, update the architecture representation, local model construction where applicable, and the generated code. Check that output widths and activation settings agree in both paths.
 3. Check that graph settings survive save and reopen, then verify that the copied script executes outside Ryven.
-
-## Run the checks
-
-Run these commands from the repository root in PowerShell.
-
-```powershell
-& .venv/Scripts/python.exe -m unittest discover -s pytorch/tests -v
-& .venv/Scripts/python.exe pytorch/tests/gui_smoke.py
-```
-
-The integration tests exercise local linear training and held-out scoring, and run the CSV, image-classifier, and VAE exports on small test datasets. The image-classifier check uses two generated images and substitutes an encoder without pretrained weights so it can run offline. The VAE check uses four generated training images and two test images in Fashion-MNIST format and verifies the checkpoint and preview. The Qt smoke test opens all four presets and checks that each can copy training code.
 
 ## Project origins
 
