@@ -1,6 +1,6 @@
 # Visual PyTorch model building in Ryven
 
-Ryven is a visual editor for connecting Python nodes. This UROP project extends earlier Ryven work on Python operations and TensorFlow with a PyTorch layer builder and training-script exporter. Connect a model and a dataset to a training node, then inspect the generated Python. For example, changing a hidden layer from 8 to 16 neurons changes both the layer's output width and the next layer's input width.
+Ryven is a visual editor for connecting Python nodes. This Undergraduate Research Opportunity Programme (UROP) project extends earlier Ryven work on Python operations and TensorFlow with a PyTorch layer builder and training-script exporter. Connect a model and a dataset to a training node, then inspect the generated Python. The saved examples include dense classifiers, image classifiers, and a variational autoencoder for reconstructing and generating clothing images.
 
 ![Ryven canvas with two input features, an eight-neuron ReLU layer, and a two-neuron output layer](docs/images/ryven-dense-layers.png)
 

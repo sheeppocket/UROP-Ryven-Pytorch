@@ -67,7 +67,9 @@ To try the workflow without a CSV, replace **CSV File** with **Sample Dataset** 
 
 The generated script includes the data generator and trains on the 128 training points. To evaluate inside Ryven, connect **test_dataset** through a second **DataLoader** to **Test Model**, then connect **trained_model** from **Train Model** and click **Train**. The [linear preset](Presets.md#run-a-preset) already has this wiring.
 
-To reproduce the report's hidden-width example, use the two-layer classifier and the training settings from steps 1–3 with **Sample Dataset** in place of **CSV File**. Copy the script with an 8-neuron hidden layer, then repeat with 16 neurons. Compare the logged training losses and save each checkpoint under a different name.
+### Reproduce the hidden-width comparison
+
+Use the two-layer classifier above with **Sample Dataset** set to **Linear boundary**. Keep batch size 32, shuffle **True**, cross entropy, Adam, learning rate 0.001, and 10 epochs for both runs. Click **Copy Training Code** with an 8-neuron hidden layer, then repeat with 16 neurons. Run each script and compare the logged training losses. Rename the first checkpoint before running the second script.
 
 ## Build a Fashion-MNIST VAE
 
@@ -124,7 +126,7 @@ Run these commands from the repository root in PowerShell.
 & .venv/Scripts/python.exe pytorch/tests/gui_smoke.py
 ```
 
-The integration tests cover graph reload, data batching, training, checkpoint export, and held-out scoring. The Qt smoke test opens all four presets and checks that each can copy training code.
+The integration tests exercise local linear training and held-out scoring, and run the CSV, image-classifier, and VAE exports on small test datasets. The image-classifier check uses two generated images and substitutes an encoder without pretrained weights so it can run offline. The VAE check uses four generated training images and two test images in Fashion-MNIST format and verifies the checkpoint and preview. The Qt smoke test opens all four presets and checks that each can copy training code.
 
 ## Project origins
 
