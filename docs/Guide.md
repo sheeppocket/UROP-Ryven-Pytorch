@@ -17,16 +17,25 @@ Ryven passes values between connected nodes on a canvas. In this project, the mo
 
 ## Install and open Ryven
 
-Run this command from the repository root.
+On **x64 Windows**, use Git Bash. Setup installs Python 3.10 for your account if needed. On **x86-64 Linux**, use Bash with Git and 64-bit Python 3.10 with `venv` support already installed.
+
+Open a terminal in the parent folder where you want to keep the project. Clone the public repository and enter the new folder.
+
+```bash
+git clone https://github.com/sheeppocket/UROP-Ryven-Pytorch.git
+cd UROP-Ryven-Pytorch
+```
+
+For a ZIP download, choose **Code → Download ZIP** on the [repository page](https://github.com/sheeppocket/UROP-Ryven-Pytorch), extract the archive, and open a terminal in the extracted folder that contains `setup.sh` and `open.sh`.
+
+From that folder, install the dependencies and open the linear preset.
 
 ```bash
 bash setup.sh
+bash open.sh pytorch/linear_demo.json
 ```
 
-- **x64 Windows** — Run the command in Git Bash. Setup installs Python 3.10 for your account if needed.
-- **x86-64 Linux** — Install Python 3.10 with `venv` support before running setup.
-
-On both platforms, setup creates or reuses the project's `.venv` and installs its packages. First-time setup needs internet access. When setup finishes, run `bash open.sh` for a blank graph or pass a [preset filepath](Presets.md).
+Setup creates or reuses `.venv` inside the repository, next to `setup.sh`, and installs the project's packages there. First-time setup needs internet access. The launcher automatically uses that environment. Run `bash open.sh` for a blank graph or pass a [preset path](Presets.md).
 
 The pinned PySide2 version uses Python 3.10. [Python 3.10 release notes](https://www.python.org/downloads/release/python-31022/)
 
