@@ -2,7 +2,7 @@
 
 [Project overview](../README.md) · [Presets](Presets.md)
 
-Use Ryven to build a PyTorch model from connected layers and export the training code to Colab or another Python environment.
+Ryven passes values between connected nodes on a canvas. In this project, the model nodes pass layer settings to the training node. The training node uses those settings to write the PyTorch model, load the selected dataset, and run training in a standalone script.
 
 - [Install and open Ryven](#install-and-open-ryven)
 - [Build a dense classifier](#build-a-dense-classifier)
@@ -12,6 +12,7 @@ Use Ryven to build a PyTorch model from connected layers and export the training
 - [Architecture](#architecture)
 - [Change a node or export](#change-a-node-or-export)
 - [Run the checks](#run-the-checks)
+- [Project origins](#project-origins)
 
 ## Install and open Ryven
 
@@ -62,11 +63,15 @@ The exported script loads the CSV into the training machine's memory. The same s
 
 For regression or other losses that take numeric targets, use one target column per output neuron.
 
-To try the workflow with bundled data, replace the CSV node with **Sample Dataset**, then choose **Linear boundary** or **XOR quadrants**. Click **Load Examples** before exporting. The generated script includes the data generator. You can also click **Train** in Ryven. The linear preset connects a separate test split to **Test Model**.
+To try the workflow without a CSV, replace **CSV File** with **Sample Dataset** and connect its **train_dataset** output to **DataLoader**. Select **Linear boundary** and click **Load Examples**. This generates 128 training points and 64 separate test points. Each point has two features, `x1` and `x2`. Points with `x1 > 0` are class 1 and the remaining points are class 0. **XOR quadrants** uses the same features and assigns class 1 when the coordinates have opposite signs.
+
+The generated script includes the data generator and trains on the 128 training points. To evaluate inside Ryven, connect **test_dataset** through a second **DataLoader** to **Test Model**, then connect **trained_model** from **Train Model** and click **Train**. The [linear preset](Presets.md#run-a-preset) already has this wiring.
+
+To reproduce the report's hidden-width example, use the two-layer classifier and the training settings from steps 1–3 with **Sample Dataset** in place of **CSV File**. Copy the script with an 8-neuron hidden layer, then repeat with 16 neurons. Compare the logged training losses and save each checkpoint under a different name.
 
 ## Build a Fashion-MNIST VAE
 
-Open the [Fashion-MNIST VAE preset](Presets.md#what-the-fashion-mnist-vae-learns) to see the wiring. Connect **Dense Input → Dense Layer(s) → VAE Latent Layer → Dense Layer(s) → Train VAE**. Set the input to 784 features and the final decoder layer to 784 neurons with activation **None**. The script flattens the images before encoding, reshapes the decoder outputs, and computes the reconstruction loss from the raw pixel logits.
+Open the [Fashion-MNIST VAE preset](Presets.md#what-the-fashion-mnist-vae-learns) to see how the variational autoencoder is wired. It learns to reconstruct clothing images from sampled latent vectors. Connect **Dense Input → Dense Layer(s) → VAE Latent Layer → Dense Layer(s) → Train VAE**. Set the input to 784 features and the final decoder layer to 784 neurons with activation **None**. The script flattens the images before encoding, reshapes the decoder outputs, and computes the reconstruction loss from the raw pixel logits.
 
 Connect **Fashion-MNIST → DataLoader → Train VAE**. Try changing the encoder width or the number of latent dimensions. **Train VAE** controls the learning rate, epochs, and how much the KL divergence contributes to the training loss. Click **Copy Training Code** and run it in Colab.
 
@@ -121,4 +126,6 @@ Run these commands from the repository root in PowerShell.
 
 The integration tests cover graph reload, data batching, training, checkpoint export, and held-out scoring. The Qt smoke test opens all four presets and checks that each can copy training code.
 
-The guide structure draws on the CS2103/T team-project sample. [AddressBook Level 3 Developer Guide](https://se-education.org/addressbook-level3/DeveloperGuide.html)
+## Project origins
+
+This project follows earlier UROP work on [Ryven nodes for Python operations](https://github.com/Leong-ZM/UROP_Ryven_2025) and [Ryven nodes for TensorFlow](https://github.com/Chiang-HuiXin/Ryven_TF). The earlier TensorFlow nodes pass tensors and Python snippets between nodes. This project passes layer and dataset settings and generates the training script at the training node. The `float_spinbox` helper in [`gui.py`](../pytorch/nodes/gui.py) adapts the earlier TensorFlow project's widget.
