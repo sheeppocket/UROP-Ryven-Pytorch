@@ -24,7 +24,7 @@ To open another preset, pass its project file to `open.sh`.
 
 - **Linear classification** — Click **Load Examples** on **Sample Dataset**, then **Train** on **Train Model**. **Test Model** reports loss and accuracy on 64 held-out points in Ryven. **Copy Training Code** exports a script that trains on 128 generated points, logs training loss, and saves a checkpoint in Colab or local Python.
 - **Fashion-MNIST VAE** — Click **Copy Training Code** on **Train VAE**. Paste it into a Colab cell and run it. The script downloads Fashion-MNIST where it runs and uses CUDA if available.
-- **Five-class digits and weed photos** — Click **Copy Training Code**. Run the script from the repository root to use the bundled training images. In Colab, upload the preset's training folder and update `DATA_PATH`. [Image classifier walkthrough](Guide.md#build-an-image-classifier)
+- **Five-class digits and weed photos** — Click **Copy Training Code**. Run the script from the repository root to use the bundled training images. For Colab, follow the [Google Drive walkthrough](Guide.md#use-image-folders-in-google-drive) or upload the training folder to the runtime and update `DATA_PATH`. [Image classifier walkthrough](Guide.md#build-an-image-classifier)
 
 ### What the Fashion-MNIST VAE learns
 

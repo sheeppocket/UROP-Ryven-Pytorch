@@ -9,6 +9,7 @@ Ryven passes values between connected nodes on a canvas. In this project, the mo
 - [Export and train in Colab](#export-and-train-in-colab)
 - [Build a Fashion-MNIST VAE](#build-a-fashion-mnist-vae)
 - [Build an image classifier](#build-an-image-classifier)
+- [Use image folders in Google Drive](#use-image-folders-in-google-drive)
 - [Architecture](#architecture)
 - [Change a node or export](#change-a-node-or-export)
 - [Run the checks](#run-the-checks)
@@ -39,15 +40,17 @@ The pinned PySide2 version uses Python 3.10. [Python 3.10 release notes](https:/
 
 ## Export and train in Colab
 
+Sign in to [Google Colab](https://colab.research.google.com/), create a Python notebook, and connect to a hosted runtime. The exported script goes in a code cell. Use a CPU runtime to compare with the report's CPU results.
+
 1. Add **Train Model** and connect the last **Dense Layer** to its **model** input.
 2. Add **CSV File** and set **csv_path** to `/content/train.csv`. Connect its **dataset** output to **DataLoader**, then connect **dataloader** to **train_data_loader** on **Train Model**. Ryven uses the CSV path without opening the file.
 3. Set **batch_size** to `32` and **shuffle** to **True**. In **Train Model**, select **cross_entropy**, **Adam**, a learning rate of `0.001`, and `10` epochs. Click **Copy Training Code**.
 
    ![Ryven graph connecting remote CSV batches and the final dense layer to Train Model, with the clipboard confirmation visible](images/ryven-copy-training-code.png)
 
-4. In Colab, upload `train.csv` to `/content`, paste the copied code into a cell, and run it. You can change `DATA_PATH` in the script if the file is somewhere else. The script loads the data on the training machine, uses CUDA when available, reports loss by epoch, and writes `training_result.pth`.
+4. Save the example below as `train.csv`. In Colab, upload it using the **Files** sidebar and check that its path is `/content/train.csv`. Paste the copied script into a new code cell and run it. If you uploaded the file somewhere else, update `DATA_PATH` in that cell before running it.
 
-The exported script uses the batch size and shuffle settings from the **DataLoader** node to create a PyTorch `DataLoader`.
+The exported script uses the batch size and shuffle settings from the **DataLoader** node to create a PyTorch `DataLoader`. It reports loss by epoch and saves `training_result.pth` in the current working directory, normally `/content` in a new notebook. Refresh the **Files** sidebar to find and download the checkpoint before the runtime ends.
 
 Use a header row, numeric feature columns first, and the target column last. For cross entropy, labels are zero-based integers. This small CSV exercises the two-feature, two-class example above.
 
@@ -69,22 +72,47 @@ The generated script includes the data generator and trains on the 128 training 
 
 ### Reproduce the hidden-width comparison
 
-Use the two-layer classifier above with **Sample Dataset** set to **Linear boundary**. Keep batch size 32, shuffle **True**, cross entropy, Adam, learning rate 0.001, and 10 epochs for both runs. Click **Copy Training Code** with an 8-neuron hidden layer, then repeat with 16 neurons. Run each script and compare the logged training losses. Rename the first checkpoint before running the second script.
+Use the two-layer classifier above with **Sample Dataset** set to **Linear boundary**. Keep batch size 32, shuffle **True**, cross entropy, Adam, learning rate 0.001, and 10 epochs for both runs. Click **Copy Training Code** with an 8-neuron hidden layer, then repeat with 16 neurons. In each pasted script, change the `output_checkpoint` entry in `SETTINGS` to a distinct name, such as `width_8.pth` and `width_16.pth`. Run the cells and compare the logged training losses.
 
 ## Build a Fashion-MNIST VAE
 
 Open the [Fashion-MNIST VAE preset](Presets.md#what-the-fashion-mnist-vae-learns) to see how the variational autoencoder is wired. It learns to reconstruct clothing images from sampled latent vectors. Connect **Dense Input → Dense Layer(s) → VAE Latent Layer → Dense Layer(s) → Train VAE**. Set the input to 784 features and the final decoder layer to 784 neurons with activation **None**. The script flattens the images before encoding, reshapes the decoder outputs, and computes the reconstruction loss from the raw pixel logits.
 
-Connect **Fashion-MNIST → DataLoader → Train VAE**. Try changing the encoder width or the number of latent dimensions. **Train VAE** controls the learning rate, epochs, and how much the KL divergence contributes to the training loss. Click **Copy Training Code** and run it in Colab.
+Connect **Fashion-MNIST → DataLoader → Train VAE**. Try changing the encoder width or the number of latent dimensions. **Train VAE** controls the learning rate, epochs, and how much the KL divergence contributes to the training loss. Click **Copy Training Code**, then paste and run it in Colab. The script downloads the dataset and writes `fashion_mnist_vae.png` and `fashion_mnist_vae.pth` to the current working directory.
 
 ## Build an image classifier
 
 1. Add **Image Encoder** and choose **resnet18**, **resnet34**, **resnet50**, or **mobilenet_v2**. **DEFAULT** weights with **freeze** set to **True** keep the pretrained encoder fixed. Ryven stores these settings in the graph. The generated script creates the encoder and fetches the weights on the training machine.
 2. Connect the encoder's **architecture** output to **previous** on a **Dense Layer**. Add as many dense layers as needed. For two classes, try **64 neurons, ReLU → 2 neurons, None**. Connect the last layer's **model** output to **Train Model** and use **cross_entropy**.
 3. Connect **Image Folder → DataLoader → Train Model**. Set **image_folder** to a path such as `/content/train` with one subfolder per class. Set the last layer's neuron count to the number of class folders. The digits and weed presets point to the bundled training folders. To run the script elsewhere, upload the preset's `train` folder and update `DATA_PATH`. The sibling `test` folder contains held-out images.
-4. Click **Copy Training Code** and run it in Colab with the image folder available. The script applies the encoder's preprocessing, loads images in batches, and saves the class names with the weights in `training_result.pth`.
+4. Click **Copy Training Code** and run it in Colab with the image folder available. For a dataset kept in Drive, follow the steps below. The script applies the encoder's preprocessing, loads images in batches, and saves the class names with the weights in `training_result.pth`.
 
 The digits images are a subset of the [UCI Optical Recognition of Handwritten Digits dataset](https://archive.ics.uci.edu/dataset/80/optical%2Brecognition%2Bof%2Bhandwritten%2Bdigits) distributed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The weed photos come from the [DeepWeeds teaching subset](../pytorch/demo_data/deepweeds/README.md).
+
+### Use image folders in Google Drive
+
+The report's Drive example uses the five-class digits preset. It works with a copy of the public repository in your own Google Drive.
+
+1. Download and extract the repository from GitHub. Upload the freshly extracted folder to **My Drive**, keeping the `pytorch/demo_data/digits/train` folder and its five class subfolders intact.
+2. Open `pytorch/five_class_demo.json` in Ryven and click **Copy Training Code** on **Train Model**.
+3. In a new hosted Colab notebook, run the cell below. When Colab asks, authorize the notebook to mount the Google Drive account you uploaded to. Replace `UROP-Ryven-Pytorch-main` with the exact name of the folder you uploaded.
+
+   ```python
+   import os
+   from pathlib import Path
+   from google.colab import drive
+
+   drive.mount("/content/drive")
+   project = Path("/content/drive/MyDrive/UROP-Ryven-Pytorch-main")
+   train = project / "pytorch/demo_data/digits/train"
+   if not train.is_dir():
+       raise FileNotFoundError(f"Check the uploaded folder name and layout: {train}")
+   os.chdir(project)
+   ```
+
+4. Paste the export into the next code cell. Leave `DATA_PATH = 'pytorch/demo_data/digits/train'` as exported and run the cell. The working directory set above makes that relative path resolve, and `training_result.pth` is saved in the uploaded project folder. To avoid overwriting an earlier run, change the `output_checkpoint` entry in `SETTINGS` before running the cell.
+
+For the weed preset, open `pytorch/weed_demo.json` in step 2, use `pytorch/demo_data/deepweeds/train` in the path check, and keep the weed export's own `DATA_PATH`. [Colab guidance on Drive authorization](https://research.google.com/colaboratory/faq.html)
 
 ## Architecture
 
